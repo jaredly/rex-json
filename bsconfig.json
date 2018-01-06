@@ -9,7 +9,6 @@
     "./src",
     {"dir": "test", "type": "dev"},
   ],
-  "package-specs": ["commonjs", "es6"],
   "entries": [{
     "backend": "native",
     "main-module": "Test"
