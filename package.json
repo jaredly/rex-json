@@ -6,6 +6,12 @@
     "json",
     "reason"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaredly/rex-json.git"
+  },
+  "homepage": "https://github.com/jaredly/rex-json#readme",
+  "bugs": "https://github.com/jaredly/rex-json/issues",
   "author": "Jared Forsyth",
   "license": "MIT",
   "scripts": {
