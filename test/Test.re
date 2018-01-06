@@ -59,9 +59,38 @@ let bsconfig = {|{
 let optBind = (fn, v) => switch (v) { | None => None | Some(v) => fn(v) };
 
 let data = parse(bsconfig);
-print_endline(stringify(data));
-ensure(get(["name"], data) == Some(String("rex-json")), "parsed name");
-ensure(get(["warnings", "error"], data) == Some(String("+8")), "parsed deeper");
-ensure(get(["entries"], data) |> optBind(nth(0)) |> optBind(get(["backend"])) == Some(String("native")), "parsed quite deep");
+ensure(get("name", data) == Some(String("rex-json")), "parsed name");
+ensure(get("warnings", data) |> optBind(get("error")) == Some(String("+8")), "parsed deeper");
+ensure(get("entries", data) |> optBind(nth(0)) |> optBind(get("backend")) == Some(String("native")), "parsed quite deep");
+
+ensure(parse(stringify(parse(bsconfig))) == parse(bsconfig), "parse + stringify + parse");
+
+
+let data = {|
+{
+  "some": "json", // with a comment!
+  "more": [1,3,],
+  "nested": [{
+    "and": [1,2,{"stuff": 5}]
+  }], // trailing commas!
+}
+|};
+let json = Json.parse(data);
+let simple = Json.get("some", json); /* == Some("json") */
+ensure(simple == Some(String("json")), "demo 1");
+
+/** Yay get us a bind of optionals */
+let (|>>) = (value, fn) => switch value { | None => None | Some(v) => fn(v) };
+
+let stuff = json
+  |> Json.get("nested")
+  |>> Json.nth(0)
+  |>> Json.get("and")
+  |>> Json.nth(2)
+  |>> Json.get("stuff"); /* == Some(5) */
+ensure(stuff == Some(Number(5.)), "demo 2");
+
+let str = Json.stringify(json); /* back to a string */
+
 
  report();

@@ -27,15 +27,9 @@ let rec stringify = t => switch t {
 | Null => "null"
 };
 
-let rec get = (keys, t) => switch keys {
-| [] => Some(t)
-| [k, ...rest] => switch t {
-  | Object(items) => switch (try (Some(List.assoc(k, items))) { | Not_found => None}) {
-    | Some(value) => get(rest, value)
-    | None => None
-  }
-  | _ => None
-  }
+let get = (key, t) => switch t {
+| Object(items) => try (Some(List.assoc(key, items))) { | Not_found => None}
+| _ => None
 };
 
 let nth = (n, t) => switch t {
