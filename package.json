@@ -1,0 +1,20 @@
+{
+  "name": "rex-json",
+  "version": "1.0.0",
+  "keywords": [
+    "BuckleScript",
+    "json",
+    "reason"
+  ],
+  "author": "Jared Forsyth",
+  "license": "MIT",
+  "scripts": {
+    "build": "bsb -make-world -backend native",
+    "watch": "bsb -make-world -backend native -w",
+    "test": "npm run build && ./lib/bs/native/test.native",
+    "clean": "bsb -clean-world"
+  },
+  "dependencies": {
+    "bs-platform": "bsansouci/bsb-native#fast"
+  }
+}
