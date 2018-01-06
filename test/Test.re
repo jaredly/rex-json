@@ -38,15 +38,17 @@ let bsconfig = {|{
   "name": "rex-json",
   "bsc-flags": "-w -27 -g",
   "warnings": {
-    "number": "-40+6+7-26-27+32..39-28-44+45",
+    "number": "-40+6+7-26-27+32..39-28-44+45", // aweomse
     "error": "+8",
   },
-  "sources": [
+  "sources": [ // stuff
     "./src",
-    {"dir": "test", "type": "dev"},
-  ],
-  "package-specs": ["commonjs", "es6"],
+    {"dir": "test", "type": "dev"}, ],
+  "package-specs": ["commonjs", "es6"], // here
   "entries": [{
+    "awesome": true,
+    "other": false,
+    "final": null,
     "backend": "native",
     "main-module": "Test"
   }],
@@ -54,6 +56,12 @@ let bsconfig = {|{
 }
 |};
 
+let optBind = (fn, v) => switch (v) { | None => None | Some(v) => fn(v) };
+
 let data = parse(bsconfig);
+print_endline(stringify(data));
+ensure(get(["name"], data) == Some(String("rex-json")), "parsed name");
+ensure(get(["warnings", "error"], data) == Some(String("+8")), "parsed deeper");
+ensure(get(["entries"], data) |> optBind(nth(0)) |> optBind(get(["backend"])) == Some(String("native")), "parsed quite deep");
 
  report();

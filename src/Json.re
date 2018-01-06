@@ -8,6 +8,45 @@ type t =
   | False
   | Null;
 
+let string_of_number = f => {
+  let s = string_of_float(f);
+  if (s.[String.length(s) - 1] == '.') {
+    String.sub(s, 0, String.length(s) - 1)
+  } else {
+    s
+  }
+};
+
+let rec stringify = t => switch t {
+| String(value) => "\"" ++ String.escaped(value) ++ "\""
+| Number(num) => string_of_number(num)
+| Array(items) => "[" ++ String.concat(", ", List.map(stringify, items)) ++ "]"
+| Object(items) => "{" ++ String.concat(", ", List.map(((k, v)) => "\"" ++ String.escaped(k) ++ "\":" ++ stringify(v), items)) ++ "}"
+| True => "true"
+| False => "false"
+| Null => "null"
+};
+
+let rec get = (keys, t) => switch keys {
+| [] => Some(t)
+| [k, ...rest] => switch t {
+  | Object(items) => switch (try (Some(List.assoc(k, items))) { | Not_found => None}) {
+    | Some(value) => get(rest, value)
+    | None => None
+  }
+  | _ => None
+  }
+};
+
+let nth = (n, t) => switch t {
+| Array(items) => if (n < List.length(items)) {
+  Some(List.nth(items, n))
+} else {
+  None
+}
+| _ => None
+};
+
 let fail = (text, pos, message) => {
   let pre = String.sub(text, 0, pos);
   let lines = Str.split(Str.regexp("\n"), pre);
@@ -99,6 +138,27 @@ let rec parse = (text, pos) => {
     | '/' => parseComment(text, pos + 1, parse)
     | '[' => parseArray(text, pos + 1)
     | '{' => parseObject(text, pos + 1)
+    | 'n' => {
+      if (String.sub(text, pos, 4) == "null") {
+        (Null, pos + 4)
+      } else {
+        fail(text, pos, "unexpected character")
+      }
+    }
+    | 't' => {
+      if (String.sub(text, pos, 4) == "true") {
+        (True, pos + 4)
+      } else {
+        fail(text, pos, "unexpected character")
+      }
+    }
+    | 'f' => {
+      if (String.sub(text, pos, 5) == "false") {
+        (False, pos + 5)
+      } else {
+        fail(text, pos, "unexpected character")
+      }
+    }
     | '\n' | '\t' | ' ' => parse(text, skipWhite(text, pos))
     | '"' => {
       let (s, pos) = parseString(text, pos + 1);
@@ -110,49 +170,6 @@ let rec parse = (text, pos) => {
   }
 }
 
-/* and parseArrayValue = (text, pos) => {
-  switch (text.[pos]) {
-  | '\n' | '\t' | ' ' => parseArrayValue(text, skipWhite(text, pos))
-  | ']' => ([], pos + 1)
-  | '/' => parseComment(text, pos + 1, parseArrayValue)
-  | _ => {
-    let (item, pos) = parse(text, pos + 1);
-    let (rest, pos) = parseArrayInner(text, pos);
-    ([item, ...rest], pos)
-  }
-  | _ => fail(text, pos, "Unexpected character in array")
-  }
-
-}
-
-and parseArrayInner = (text, pos) => {
-  switch (text.[pos]) {
-  | '\n' | '\t' | ' ' => parseArrayInner(text, skipWhite(text, pos))
-  | ']' => ([], pos + 1)
-  | '/' => parseComment(text, pos + 1, parseArrayInner)
-  | ',' => {
-    parseArrayValue(text, pos + 1)
-    /* let (item, pos) = parse(text, pos + 1);
-    let (rest, pos) = parseArrayInner(text, pos);
-    ([item, ...rest], pos) */
-  }
-  | _ => fail(text, pos, "Unexpected character in array")
-  }
-}
-
-and parseArray = (text, pos) => {
-  switch (text.[pos]) {
-  | '\n' | '\t' | ' ' => parseArray(text, skipWhite(text, pos))
-  | ']' => (Array([]), pos + 1)
-  | '/' => parseComment(text, pos + 1, parseArray)
-  | _ => {
-    let (item, pos) = parse(text, pos);
-    let (rest, pos) = parseArrayInner(text, pos);
-    (Array([item, ...rest]), pos)
-  }
-  }
-} */
-
 and parseArrayValue = (text, pos) => {
   let pos = skip(text, pos);
   let (value, pos) = parse(text, pos);
@@ -161,7 +178,7 @@ and parseArrayValue = (text, pos) => {
   | ',' => {
     let pos = skip(text, pos + 1);
     if (text.[pos] == ']') {
-      ([value], pos)
+      ([value], pos + 1)
     } else {
       let (rest, pos) = parseArrayValue(text, pos);
       ([value, ...rest], pos)
@@ -200,7 +217,7 @@ and parseObjectValue = (text, pos) => {
     | ',' => {
       let pos = skip(text, pos + 1);
       if (text.[pos] == '}') {
-        ([(key, value)], pos)
+        ([(key, value)], pos + 1)
       } else {
         let (rest, pos) = parseObjectValue(text, pos);
         ([(key, value), ...rest], pos)
@@ -224,46 +241,6 @@ and parseObject = (text, pos) => {
     (Object(pairs), pos)
   }
 }
-
-/* and parseObjectValue = (text, pos) => {
-  switch (text.[pos]) {
-  | '\n' | '\t' | ' ' => parseObjectValue(text, skipWhite(text, pos))
-  | '/' => parseComment(text, pos + 1, parseObjectValue)
-  | '}' => ([], pos + 1)
-  | '"' => {
-    let (k, pos) = parseString(text, pos + 1);
-    let pos = expect(':', text, skipWhite(text, pos), "colon");
-    let (v, pos) = parse(text, pos);
-    let (rest, pos) = parseObjectInner(text, pos);
-    ([(k, v), ...rest], pos)
-  }
-  | _ => fail(text, pos, "Unexpected character in object value")
-  }
-}
-
-and parseObjectInner = (text, pos) => {
-  switch (text.[pos]) {
-  | '\n' | '\t' | ' ' => parseObjectInner(text, skipWhite(text, pos))
-  | '/' => parseComment(text, pos + 1, parseObjectInner)
-  | '}' => ([], pos + 1)
-  | ',' => {
-    parseObjectValue(text, pos + 1)
-  }
-  | _ => fail(text, pos, "Unexpected character in object")
-  }
-}
-
-and parseObject = (text, pos) => {
-  switch (text.[pos]) {
-  | '\n' | '\t' | ' ' => parseObject(text, skipWhite(text, pos))
-  | '}' => (Object([]), pos + 1)
-  | '/' => parseComment(text, pos + 1, parseObject)
-  | _ => {
-    let (items, pos) = parseObjectValue(text, pos);
-    (Object(items), pos)
-  }
-  }
-} */
 
 ;
 
