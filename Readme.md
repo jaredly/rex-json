@@ -6,7 +6,7 @@ Why would you want this library?
 - you're fine with "good enough" performance
 
 Usage:
-```
+```ml
 let data = {|
 {
   "some": "json", // with a comment!
@@ -32,7 +32,7 @@ let stuff = json
 let str = Json.stringify(json); /* back to a string */
 ```
 
-```
+```ml
 type t =
   | String(string)
   | Number(float)
