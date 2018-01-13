@@ -11,7 +11,7 @@ Why would you want this library?
 Add `rex-json` to your `package.json` and your `bsconfig.json`.
 
 ## Usage:
-```ml
+```rust
 let data = {|
 {
   "some": "json", // with a comment!
@@ -25,19 +25,20 @@ let json = Json.parse(data);
 let simple = Json.get("some", json); /* == Some(String("json")) */
 
 /** Yay get us a bind of optionals */
-let (|>>) = (value, fn) => switch value { | None => None | Some(v) => fn(v) };
+let (|>>) = Json.bind;
 
 let stuff = json
   |> Json.get("nested")
   |>> Json.nth(0)
   |>> Json.get("and")
   |>> Json.nth(2)
-  |>> Json.get("stuff"); /* == Some(Number(5.)) */
+  |>> Json.get("stuff")
+  |>> Json.number; /* == Some(5.) */
 
 let str = Json.stringify(json); /* back to a string */
 ```
 
-```ml
+```rust
 type t =
   | String(string)
   | Number(float)
@@ -46,4 +47,20 @@ type t =
   | True
   | False
   | Null;
+```
+
+```rust
+/* doing let (|>>) = Json.bind can be quite nice */
+let bind: (option('a), 'a => 'b) => option('b);
+let get: (string, t) => option(t) // object access
+let nth: (int, t) => option(t) // array access
+
+/* helpers for unwrapping `t` */
+let array: t => option(list(t))
+let obj: t => option(list((string, t)))
+
+let string: t => option(string)
+let number: t => option(float)
+let bool t => option(bool)
+let null: t => option(())
 ```

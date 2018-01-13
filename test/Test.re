@@ -1,26 +1,6 @@
 
 
-let tests = ref(0);
-let failures = ref(0);
-
-let ensure = (bool, message) => {
-  tests := tests^ + 1;
-  if (!bool) {
-    print_endline("Failed: " ++ message);
-    failures := failures^ + 1;
-  };
-};
-
-let report = () => {
-  print_newline();
-  if (failures^ == 0) {
-    print_endline("Success! All " ++ string_of_int(tests^) ++ " tests passed");
-    exit(0);
-  } else {
-    print_endline("Failures: " ++ string_of_int(failures^) ++ " / " ++ string_of_int(tests^));
-    exit(1);
-  }
-};
+let (ensure, report) = TestLib.go();
 
 open Json;
 ensure(parse("123") == Number(123.), "parse number");
@@ -80,7 +60,7 @@ let simple = Json.get("some", json); /* == Some("json") */
 ensure(simple == Some(String("json")), "demo 1");
 
 /** Yay get us a bind of optionals */
-let (|>>) = (value, fn) => switch value { | None => None | Some(v) => fn(v) };
+let (|>>) = Json.bind;
 
 let stuff = json
   |> Json.get("nested")
@@ -92,5 +72,6 @@ ensure(stuff == Some(Number(5.)), "demo 2");
 
 let str = Json.stringify(json); /* back to a string */
 
+report();
 
- report();
+/* let _ = BigList.ensure; */
