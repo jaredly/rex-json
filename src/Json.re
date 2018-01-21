@@ -41,9 +41,32 @@ let nth = (n, t) => switch t {
 | _ => None
 };
 
+let split_by = (~keep_empty=false, is_delim, str) => {
+  let len = String.length(str);
+  let rec loop = (acc, last_pos, pos) =>
+    if (pos == (-1)) {
+      if (last_pos == 0 && ! keep_empty) {
+        acc
+      } else {
+        [String.sub(str, 0, last_pos), ...acc]
+      }
+    } else if (is_delim(str.[pos])) {
+      let new_len = last_pos - pos - 1;
+      if (new_len != 0 || keep_empty) {
+        let v = String.sub(str, pos + 1, new_len);
+        loop([v, ...acc], pos, pos - 1)
+      } else {
+        loop(acc, pos, pos - 1)
+      }
+    } else {
+      loop(acc, last_pos, pos - 1)
+    };
+  loop([], len, len - 1)
+};
+
 let fail = (text, pos, message) => {
   let pre = String.sub(text, 0, pos);
-  let lines = Str.split(Str.regexp("\n"), pre);
+  let lines = split_by((c) => c == '\n', pre);
   let last = List.nth(lines, List.length(lines) - 1);
   let col = String.length(last) + 1;
   let line = List.length(lines);
