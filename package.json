@@ -14,7 +14,7 @@
     "test": "npm run build && ./lib/bs/native/test.native",
     "clean": "bsb -clean-world"
   },
-  "dependencies": {
+  "devDependencies": {
     "bs-platform": "bsansouci/bsb-native#fast"
   }
 }

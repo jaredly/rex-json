@@ -12,6 +12,9 @@
   "entries": [{
     "backend": "native",
     "main-module": "Test"
+  },{
+    "backend": "js",
+    "main-module": "Test"
   }],
   "refmt": 3,
 }
