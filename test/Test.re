@@ -70,6 +70,13 @@ let data = {|
 {
   "some": "json", // with a comment!
   "more": [1,3,],
+  "this": {
+    "object": {
+      "is": {
+        "really": "nested"
+      }
+    }
+  },
   "nested": [{
     "and": [1,2,{"stuff": 5}]
   }], // trailing commas!
@@ -90,7 +97,9 @@ let stuff = json
   |>> Json.get("stuff"); /* == Some(5) */
 ensure(stuff == Some(Number(5.)), "demo 2");
 
+let nestedObj = json |> Json.getPath("this.object.is.really"); /* Some(String("nested")) */
+ensure(nestedObj == Some(String("nested")), "demo 3");
+
 let str = Json.stringify(json); /* back to a string */
 
-
- report();
+report();
