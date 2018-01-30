@@ -1,11 +1,17 @@
 {
   "name": "rex-json",
-  "version": "1.0.1",
+  "version": "1.2.0",
   "keywords": [
     "BuckleScript",
     "json",
     "reason"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jaredly/rex-json.git"
+  },
+  "homepage": "https://github.com/jaredly/rex-json#readme",
+  "bugs": "https://github.com/jaredly/rex-json/issues",
   "author": "Jared Forsyth",
   "license": "MIT",
   "scripts": {

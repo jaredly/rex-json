@@ -27,20 +27,6 @@ let rec stringify = t => switch t {
 | Null => "null"
 };
 
-let get = (key, t) => switch t {
-| Object(items) => try (Some(List.assoc(key, items))) { | Not_found => None}
-| _ => None
-};
-
-let nth = (n, t) => switch t {
-| Array(items) => if (n < List.length(items)) {
-  Some(List.nth(items, n))
-} else {
-  None
-}
-| _ => None
-};
-
 let split_by = (~keep_empty=false, is_delim, str) => {
   let len = String.length(str);
   let rec loop = (acc, last_pos, pos) =>
@@ -94,8 +80,8 @@ let fail = (text, pos, message) => {
   let last = List.nth(lines, List.length(lines) - 1);
   let col = String.length(last) + 1;
   let line = List.length(lines);
-  (Printf.printf("Error \"%s\" at %d:%d -> %s\n", message, line, col, last));
-  failwith("Parse error");
+  let string = (Printf.sprintf("Error \"%s\" at %d:%d -> %s\n", message, line, col, last));
+  failwith(string);
 };
 
 let rec skipToNewline = (text, pos) => {
@@ -109,7 +95,7 @@ let rec skipToNewline = (text, pos) => {
 };
 
 let rec skipWhite = (text, pos) => {
-  if (text.[pos] == ' ' || text.[pos] == '\t' || text.[pos] == '\n') {
+  if (pos < String.length(text) && (text.[pos] == ' ' || text.[pos] == '\t' || text.[pos] == '\n')) {
     skipWhite(text, pos + 1)
   } else {
     pos
@@ -154,8 +140,8 @@ let parseComment: 'a . (string, int, (string, int) => 'a) => 'a = (text, pos, ne
 };
 
 let maybeSkipComment = (text, pos) => {
-  if (text.[pos] == '/') {
-    if (text.[pos + 1] == '/') {
+  if (pos < String.length(text) && text.[pos] == '/') {
+    if (pos + 1 < String.length(text) && text.[pos + 1] == '/') {
       skipToNewline(text, pos + 1)
     } else {
       fail(text, pos, "Invalid synatx")
@@ -166,9 +152,13 @@ let maybeSkipComment = (text, pos) => {
 };
 
 let rec skip = (text, pos) => {
-  let n = skipWhite(text, pos) |> maybeSkipComment(text);
-  if (n > pos) skip(text, n)
-  else n
+  if (pos == String.length(text)) {
+    pos
+  } else {
+    let n = skipWhite(text, pos) |> maybeSkipComment(text);
+    if (n > pos) skip(text, n)
+    else n
+  }
 };
 
 let rec parse = (text, pos) => {
@@ -286,6 +276,60 @@ and parseObject = (text, pos) => {
 ;
 
 let parse = text => {
-  let (item, _) = parse(text, 0);
-  item
+  let (item, pos) = parse(text, 0);
+  let pos = skip(text, pos);
+  if (pos < String.length(text)) {
+    failwith("Extra data after parse finished: " ++ String.sub(text, pos, String.length(text) - pos))
+  } else {
+    item
+  }
+};
+
+/* Accessor helpers */
+
+let bind = (v, fn) => switch (v) { | None => None | Some(v) => fn(v) };
+
+let get = (key, t) => switch t {
+| Object(items) => try (Some(List.assoc(key, items))) { | Not_found => None}
+| _ => None
+};
+
+let nth = (n, t) => switch t {
+| Array(items) => if (n < List.length(items)) {
+  Some(List.nth(items, n))
+} else {
+  None
+}
+| _ => None
+};
+
+let string = t => switch t {
+| String(s) => Some(s)
+| _ => None
+};
+
+let number = t => switch t {
+| Number(s) => Some(s)
+| _ => None
+};
+
+let array = t => switch t {
+| Array(s) => Some(s)
+| _ => None
+};
+
+let obj = t => switch t {
+| Object(s) => Some(s)
+| _ => None
+};
+
+let bool = t => switch t {
+| True => Some(true)
+| False => Some(false)
+| _ => None
+};
+
+let null = t => switch t {
+| Null => Some(())
+| _ => None
 };
