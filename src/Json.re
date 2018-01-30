@@ -27,20 +27,6 @@ let rec stringify = t => switch t {
 | Null => "null"
 };
 
-let get = (key, t) => switch t {
-| Object(items) => try (Some(List.assoc(key, items))) { | Not_found => None}
-| _ => None
-};
-
-let nth = (n, t) => switch t {
-| Array(items) => if (n < List.length(items)) {
-  Some(List.nth(items, n))
-} else {
-  None
-}
-| _ => None
-};
-
 let split_by = (~keep_empty=false, is_delim, str) => {
   let len = String.length(str);
   let rec loop = (acc, last_pos, pos) =>
