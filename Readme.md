@@ -16,6 +16,13 @@ let data = {|
 {
   "some": "json", // with a comment!
   "more": [1,3,],
+  "this": {
+    "object": {
+      "is": {
+        "really": "nested"
+      }
+    }
+  },
   "nested": [{
     "and": [1,2,{"stuff": 5}]
   }], // trailing commas!
@@ -34,6 +41,9 @@ let stuff = json
   |>> Json.nth(2)
   |>> Json.get("stuff")
   |>> Json.number; /* == Some(5.) */
+
+/** Using a json path for nested objects */
+let nestedObj = json |> Json.getPath("this.object.is.really"); /* Some(String("nested")) */
 
 let str = Json.stringify(json); /* back to a string */
 ```

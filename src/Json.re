@@ -50,6 +50,30 @@ let split_by = (~keep_empty=false, is_delim, str) => {
   loop([], len, len - 1)
 };
 
+let unwrap = (message, t) =>
+  switch t {
+  | Some(v) => v
+  | None => failwith(message)
+  };
+
+let rec parsePath = (keyList, t) =>
+  switch keyList {
+  | [] => t
+  | [head, ...rest] =>
+    parsePath(
+      rest,
+      get(head, t) |> unwrap("Could not find object '" ++ head ++ "'")
+    )
+  };
+
+let getPath = (path, t) => {
+  let keys = split_by(c => c == '.', path);
+  switch t {
+  | Object(items) => Some(parsePath(keys, t))
+  | _ => None
+  };
+};
+
 let fail = (text, pos, message) => {
   let pre = String.sub(text, 0, pos);
   let lines = split_by((c) => c == '\n', pre);
