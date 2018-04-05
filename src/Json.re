@@ -56,24 +56,6 @@ let unwrap = (message, t) =>
   | None => failwith(message)
   };
 
-let rec parsePath = (keyList, t) =>
-  switch keyList {
-  | [] => t
-  | [head, ...rest] =>
-    parsePath(
-      rest,
-      get(head, t) |> unwrap("Could not find object '" ++ head ++ "'")
-    )
-  };
-
-let getPath = (path, t) => {
-  let keys = split_by(c => c == '.', path);
-  switch t {
-  | Object(items) => Some(parsePath(keys, t))
-  | _ => None
-  };
-};
-
 let fail = (text, pos, message) => {
   let pre = String.sub(text, 0, pos);
   let lines = split_by((c) => c == '\n', pre);
@@ -332,4 +314,22 @@ let bool = t => switch t {
 let null = t => switch t {
 | Null => Some(())
 | _ => None
+};
+
+let rec parsePath = (keyList, t) =>
+  switch keyList {
+  | [] => t
+  | [head, ...rest] =>
+    parsePath(
+      rest,
+      get(head, t) |> unwrap("Could not find object '" ++ head ++ "'")
+    )
+  };
+
+let getPath = (path, t) => {
+  let keys = split_by(c => c == '.', path);
+  switch t {
+  | Object(items) => Some(parsePath(keys, t))
+  | _ => None
+  };
 };
