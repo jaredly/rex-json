@@ -47,11 +47,6 @@
 <a href="#value-Infix.|?>" class='level-4 value'>|?></a>
 <a href="#value-Infix.|?>>" class='level-4 value'>|?>></a>
 <a href="#value-Infix.fold" class='level-4 value'>fold</a>
-<a href="#value-Infix.|!" class='level-4 value'>|!</a>
-<a href="#value-Infix.|?" class='level-4 value'>|?</a>
-<a href="#value-Infix.|?>" class='level-4 value'>|?></a>
-<a href="#value-Infix.|?>>" class='level-4 value'>|?>></a>
-<a href="#value-Infix.fold" class='level-4 value'>fold</a>
 <a href="#value-string_of_number" class='level-3 value'>string_of_number</a>
 <a href="#value-unwrap" class='level-3 value'>unwrap</a>
 <a href="#value-bind" class='level-3 value'>bind</a>
@@ -72,7 +67,7 @@
 <a href="#Basics" id="Basics"><h2>Basics</h2></a>
 
 <pre class='code' data-code-id='0'><code>open Json.Infix; /* for the nice infix operators */
-let raw = {|{&quot;hello&quot;: &quot;folks&quot;|};
+let raw = {|{&quot;hello&quot;: &quot;folks&quot;}|};
 let who = Json.parse(raw) |&gt; Json.get(&quot;hello&quot;) |?&gt; Json.string;
 Js.log(who);</code></pre>
 
@@ -190,52 +185,7 @@ let inc = x =&gt; x + 1;
 let x: int = fold(Some(4), 10, inc);
 let y: int = fold(None, 2, inc);
 Js.log2(x, y);</code></pre></div></div>
-<p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|!" id="value-Infix.|!">|!</a> = (option('a), string) => 'a</h4>
-
-<div class='body '><p>The &quot;force unwrap&quot; operator</p>
-<p>If you&#39;re sure there&#39;s a value, you can force it.</p>
-<pre class='code' data-code-id='9'><code>open Json.Infix;
-let x: int = Some(10) |! &quot;Expected this to be present&quot;;
-Js.log(x);</code></pre>
-
-<p>But you gotta be sure, otherwise it will throw.</p>
-<pre class='code' data-code-id='10'><code>open Json.Infix;
-let x: int = None |! &quot;This will throw&quot;;</code></pre></div></div>
-
-<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?" id="value-Infix.|?">|?</a> = (option('a), 'a) => 'a</h4>
-
-<div class='body '><p>The &quot;upwrap with default&quot; operator</p>
-<pre class='code' data-code-id='11'><code>open Json.Infix;
-let x: int = Some(10) |? 4;
-let y: int = None |? 5;
-Js.log2(x, y);</code></pre></div></div>
-
-<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>" id="value-Infix.|?>">|?></a> = (option('a), ('a) => option('a)) => option('a)</h4>
-
-<div class='body '><p>The &quot;transform contents into new optional&quot; operator</p>
-<pre class='code' data-code-id='12'><code>open Json.Infix;
-let maybeInc = x =&gt; x &gt; 5 ? Some(x + 1) : None;
-let x: option(int) = Some(14) |?&gt; maybeInc;
-let y: option(int) = None |?&gt; maybeInc;</code></pre></div></div>
-
-<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>>" id="value-Infix.|?>>">|?>></a> = (option('a), ('a) => 'a) => option('a)</h4>
-
-<div class='body '><p>The &quot;transform contents into new value &amp; then re-wrap&quot; operator</p>
-<pre class='code' data-code-id='13'><code>open Json.Infix;
-let inc = x =&gt; x + 1;
-let x: option(int) = Some(7) |?&gt;&gt; inc;
-let y: option(int) = None |?&gt;&gt; inc;
-Js.log2(x, y);</code></pre></div></div>
-
-<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.fold" id="value-Infix.fold">fold</a> = (option('a), 'a, ('a) => 'a) => 'a</h4>
-
-<div class='body '><p>&quot;handle the value if present, otherwise here&#39;s the default&quot;</p>
-<p>It&#39;s called fold because that&#39;s what people call it :?. It&#39;s the same as &quot;transform contents to new value&quot; + &quot;unwrap with default&quot;.</p>
-<pre class='code' data-code-id='14'><code>open Json.Infix;
-let inc = x =&gt; x + 1;
-let x: int = fold(Some(4), 10, inc);
-let y: int = fold(None, 2, inc);
-Js.log2(x, y);</code></pre></div></div></div></div><p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-string_of_number" id="value-string_of_number">string_of_number</a> = (float) => string</h4>
+</div></div><p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-string_of_number" id="value-string_of_number">string_of_number</a> = (float) => string</h4>
 
 <div class='body body-empty'></div></div>
 

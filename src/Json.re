@@ -7,7 +7,7 @@
  *
  * ```
  * open Json.Infix; /* for the nice infix operators */
- * let raw = {|{"hello": "folks"|};
+ * let raw = {|{"hello": "folks"}|};
  * let who = Json.parse(raw) |> Json.get("hello") |?> Json.string;
  * Js.log(who);
  * ```
@@ -125,7 +125,7 @@ let rec stringify = t => switch t {
 | String(value) => "\"" ++ String.escaped(value) ++ "\""
 | Number(num) => string_of_number(num)
 | Array(items) => "[" ++ String.concat(", ", List.map(stringify, items)) ++ "]"
-| Object(items) => "{" ++ String.concat(", ", List.map(((k, v)) => "\"" ++ String.escaped(k) ++ "\":" ++ stringify(v), items)) ++ "}"
+| Object(items) => "{" ++ String.concat(", ", List.map(((k, v)) => "\"" ++ String.escaped(k) ++ "\": " ++ stringify(v), items)) ++ "}"
 | True => "true"
 | False => "false"
 | Null => "null"
