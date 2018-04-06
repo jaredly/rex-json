@@ -11,7 +11,7 @@ Why would you want this library?
 Add `rex-json` to your `package.json` and your `bsconfig.json`.
 
 ## Usage:
-```rust
+```reason
 let data = {|
 {
   "some": "json", // with a comment!
@@ -46,31 +46,4 @@ let stuff = json
 let nestedObj = json |> Json.getPath("this.object.is.really"); /* Some(String("nested")) */
 
 let str = Json.stringify(json); /* back to a string */
-```
-
-```rust
-type t =
-  | String(string)
-  | Number(float)
-  | Array(list(t))
-  | Object(list((string, t)))
-  | True
-  | False
-  | Null;
-```
-
-```rust
-/* doing let (|>>) = Json.bind can be quite nice */
-let bind: (option('a), 'a => 'b) => option('b);
-let get: (string, t) => option(t) // object access
-let nth: (int, t) => option(t) // array access
-
-/* helpers for unwrapping `t` */
-let array: t => option(list(t))
-let obj: t => option(list((string, t)))
-
-let string: t => option(string)
-let number: t => option(float)
-let bool t => option(bool)
-let null: t => option(())
 ```

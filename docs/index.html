@@ -76,29 +76,6 @@ let stuff = json
 let nestedObj = json |&gt; Json.getPath(&quot;this.object.is.really&quot;); /* Some(String(&quot;nested&quot;)) */
 
 let str = Json.stringify(json); /* back to a string */</code></pre>
-
-<pre class='code' data-code-id='16'><code>type t =
-  | String(string)
-  | Number(float)
-  | Array(list(t))
-  | Object(list((string, t)))
-  | True
-  | False
-  | Null;</code></pre>
-
-<pre class='code' data-code-id='17'><code>/* doing let (|&gt;&gt;) = Json.bind can be quite nice */
-let bind: (option(&#39;a), &#39;a =&gt; &#39;b) =&gt; option(&#39;b);
-let get: (string, t) =&gt; option(t) // object access
-let nth: (int, t) =&gt; option(t) // array access
-
-/* helpers for unwrapping `t` */
-let array: t =&gt; option(list(t))
-let obj: t =&gt; option(list((string, t)))
-
-let string: t =&gt; option(string)
-let number: t =&gt; option(float)
-let bool t =&gt; option(bool)
-let null: t =&gt; option(())</code></pre>
     </div>
     <div class='right-blank'></div>
     </div>
