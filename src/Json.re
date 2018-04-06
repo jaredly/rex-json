@@ -18,9 +18,20 @@
  *
  * ## Accessing descendents
  *
- * @doc get, nth
+ * @doc get, nth, getPath
  *
- */
+ * ## Coercing to types
+ *
+ * @doc string, number, array, obj, bool, null
+ *
+ * ## The JSON type
+ *
+ * @doc t
+ *
+ * ## Infix operators for easier working
+ *
+ * @doc Infix
+ */;
 
 type t =
   | String(string)
@@ -97,6 +108,13 @@ let module Infix = {
   let fold = (o, d, f) => switch o { | None => d | Some(v) => f(v) };
 };
 
+/** ```
+ * let text = {|{"hello": "folks", "aa": [2, 3, "four"|};
+ * let result = Json.stringify(Json.parse(text));
+ * Js.log(result);
+ * assert(text == result);
+ * ```
+ */
 let rec stringify = t => switch t {
 | String(value) => "\"" ++ String.escaped(value) ++ "\""
 | Number(num) => string_of_number(num)
@@ -106,6 +124,15 @@ let rec stringify = t => switch t {
 | False => "false"
 | Null => "null"
 };
+
+let unwrap = (message, t) =>
+  switch t {
+  | Some(v) => v
+  | None => failwith(message)
+  };
+
+[@nodoc]
+let module Parser = {
 
 let split_by = (~keep_empty=false, is_delim, str) => {
   let len = String.length(str);
@@ -129,12 +156,6 @@ let split_by = (~keep_empty=false, is_delim, str) => {
     };
   loop([], len, len - 1)
 };
-
-let unwrap = (message, t) =>
-  switch t {
-  | Some(v) => v
-  | None => failwith(message)
-  };
 
 let fail = (text, pos, message) => {
   let pre = String.sub(text, 0, pos);
@@ -333,13 +354,14 @@ and parseObject = (text, pos) => {
     let (pairs, pos) = parseObjectValue(text, pos);
     (Object(pairs), pos)
   }
-}
+};
 
-;
+};
 
+/** Turns some text into a json object. throws on failure */
 let parse = text => {
-  let (item, pos) = parse(text, 0);
-  let pos = skip(text, pos);
+  let (item, pos) = Parser.parse(text, 0);
+  let pos = Parser.skip(text, pos);
   if (pos < String.length(text)) {
     failwith("Extra data after parse finished: " ++ String.sub(text, pos, String.length(text) - pos))
   } else {
@@ -351,11 +373,13 @@ let parse = text => {
 
 let bind = (v, fn) => switch (v) { | None => None | Some(v) => fn(v) };
 
+/** If `t` is an object, get the value associated with the given string key */
 let get = (key, t) => switch t {
 | Object(items) => try (Some(List.assoc(key, items))) { | Not_found => None}
 | _ => None
 };
 
+/** If `t` is an array, get the value associated with the given index */
 let nth = (n, t) => switch t {
 | Array(items) => if (n < List.length(items)) {
   Some(List.nth(items, n))
@@ -406,8 +430,15 @@ let rec parsePath = (keyList, t) =>
     )
   };
 
+/** Get a deeply nested value from an object `t`.
+ * ```
+ * let json = Json.parse({|{"a": {"b": {"c": 2}}}|});
+ * let num = Json.getPath("a.b.c", json) |> Json.number;
+ * assert(num == Some(2))
+ * ```
+ */
 let getPath = (path, t) => {
-  let keys = split_by(c => c == '.', path);
+  let keys = Parser.split_by(c => c == '.', path);
   switch t {
   | Object(items) => Some(parsePath(keys, t))
   | _ => None

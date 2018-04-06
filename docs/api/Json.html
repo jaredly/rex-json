@@ -1,0 +1,243 @@
+
+    
+<!doctype html>
+<meta charset=utf8>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel=stylesheet href='../styles.css'>
+<script defer src='../script.js'></script>
+<title>Json</title>
+<body>
+<script>window.relativeToRoot=".."</script>
+<div id='error-message'>
+  ⚠️ Oops! This page doesn't appear to define a <span>type</span> called <code>_</code>.
+</div>
+
+    <script>window.shouldCheckHashes=true</script>
+    <div class='container'>
+    
+    <div class='sidebar-wrapper'>
+    <div class='sidebar-expander'>Show navigation</div>
+    <div class='sidebar'>
+      <a href="../search.html" style="display: block; padding: 0 8px;">Search</a>
+      <div class='docs-listing'><a href="../index.html">Home</a></div>
+      <div class='table-of-contents'>
+      <div class='toc-header'>Page Contents</div>
+      <a href="#Json-parser" class='level-1 header'>Json parser</a>
+<a href="#Basics" class='level-2 header'>Basics</a>
+<a href="#Parse--amp--stringify" class='level-2 header'>Parse &amp; stringify</a>
+<a href="#value-parse" class='level-3 value'>parse</a>
+<a href="#value-stringify" class='level-3 value'>stringify</a>
+<a href="#Accessing-descendents" class='level-2 header'>Accessing descendents</a>
+<a href="#value-get" class='level-3 value'>get</a>
+<a href="#value-nth" class='level-3 value'>nth</a>
+<a href="#value-getPath" class='level-3 value'>getPath</a>
+<a href="#Coercing-to-types" class='level-2 header'>Coercing to types</a>
+<a href="#value-string" class='level-3 value'>string</a>
+<a href="#value-number" class='level-3 value'>number</a>
+<a href="#value-array" class='level-3 value'>array</a>
+<a href="#value-obj" class='level-3 value'>obj</a>
+<a href="#value-bool" class='level-3 value'>bool</a>
+<a href="#value-null" class='level-3 value'>null</a>
+<a href="#The-JSON-type" class='level-2 header'>The JSON type</a>
+<a href="#type-t" class='level-3 type'>t</a>
+<a href="#Infix-operators-for-easier-working" class='level-2 header'>Infix operators for easier working</a>
+<a href="#module-Infix" class='level-3 module'>Infix</a>
+<a href="#value-Infix.|!" class='level-4 value'>|!</a>
+<a href="#value-Infix.|?" class='level-4 value'>|?</a>
+<a href="#value-Infix.|?>" class='level-4 value'>|?></a>
+<a href="#value-Infix.|?>>" class='level-4 value'>|?>></a>
+<a href="#value-Infix.fold" class='level-4 value'>fold</a>
+<a href="#value-Infix.|!" class='level-4 value'>|!</a>
+<a href="#value-Infix.|?" class='level-4 value'>|?</a>
+<a href="#value-Infix.|?>" class='level-4 value'>|?></a>
+<a href="#value-Infix.|?>>" class='level-4 value'>|?>></a>
+<a href="#value-Infix.fold" class='level-4 value'>fold</a>
+<a href="#value-string_of_number" class='level-3 value'>string_of_number</a>
+<a href="#value-unwrap" class='level-3 value'>unwrap</a>
+<a href="#value-bind" class='level-3 value'>bind</a>
+<a href="#value-parsePath" class='level-3 value'>parsePath</a>
+      </div>
+      <div class='project-listing'><div class='project-title'>Package modules</div><a href="Json.html">Json</a>
+<a href="BigList.html">BigList</a>
+<a href="Test.html">Test</a>
+<a href="TestLib.html">TestLib</a></div>
+    </div>
+    </div>
+  
+    <div class='main'>
+    <a href="https://github.com/jaredly/rex-json/blob/master/./src/Json.re" class="edit-link">Edit</a>
+    <a href="#Json-parser" id="Json-parser"><h1>Json parser</h1></a>
+
+<p>Works with bucklescript and bsb-native</p>
+<a href="#Basics" id="Basics"><h2>Basics</h2></a>
+
+<pre><code>open Json.Infix; /* for the nice infix operators */
+let raw = {|{&quot;hello&quot;: &quot;folks&quot;|};
+let who = Json.parse(raw) |&gt; Json.get(&quot;hello&quot;) |?&gt; Json.string;
+Js.log(who);</code></pre>
+
+<a href="#Parse--amp--stringify" id="Parse--amp--stringify"><h2>Parse &amp; stringify</h2></a>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-parse" id="value-parse">parse</a> = (string) => <a href="#type-t">t</a></h4>
+
+<div class='body '><p> Turns some text into a json object. throws on failure</p>
+</div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-stringify" id="value-stringify">stringify</a> = (<a href="#type-t">t</a>) => string</h4>
+
+<div class='body '><pre><code>let text = {|{&quot;hello&quot;: &quot;folks&quot;, &quot;aa&quot;: [2, 3, &quot;four&quot;|};
+let result = Json.stringify(Json.parse(text));
+Js.log(result);
+assert(text == result);</code></pre></div></div><a href="#Accessing-descendents" id="Accessing-descendents"><h2>Accessing descendents</h2></a>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-get" id="value-get">get</a> = (string, <a href="#type-t">t</a>) => option(<a href="#type-t">t</a>)</h4>
+
+<div class='body '><p> If <code>t</code> is an object, get the value associated with the given string key</p>
+</div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-nth" id="value-nth">nth</a> = (int, <a href="#type-t">t</a>) => option(<a href="#type-t">t</a>)</h4>
+
+<div class='body '><p> If <code>t</code> is an array, get the value associated with the given index</p>
+</div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-getPath" id="value-getPath">getPath</a> = (string, <a href="#type-t">t</a>) => option(<a href="#type-t">t</a>)</h4>
+
+<div class='body '><p>Get a deeply nested value from an object <code>t</code>.</p>
+<pre><code>let json = Json.parse({|{&quot;a&quot;: {&quot;b&quot;: {&quot;c&quot;: 2}}}|});
+let num = Json.getPath(&quot;a.b.c&quot;, json) |&gt; Json.number;
+assert(num == Some(2))</code></pre></div></div><a href="#Coercing-to-types" id="Coercing-to-types"><h2>Coercing to types</h2></a>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-string" id="value-string">string</a> = (<a href="#type-t">t</a>) => option(string)</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-number" id="value-number">number</a> = (<a href="#type-t">t</a>) => option(float)</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-array" id="value-array">array</a> = (<a href="#type-t">t</a>) => option(list(<a href="#type-t">t</a>))</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-obj" id="value-obj">obj</a> = (<a href="#type-t">t</a>) => option(list((string, <a href="#type-t">t</a>)))</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-bool" id="value-bool">bool</a> = (<a href="#type-t">t</a>) => option(bool)</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-null" id="value-null">null</a> = (<a href="#type-t">t</a>) => option(unit)</h4>
+
+<div class='body body-empty'></div></div><a href="#The-JSON-type" id="The-JSON-type"><h2>The JSON type</h2></a>
+
+<div class='doc-item'><h4 class='item'>type <a href="#type-t" id="type-t">t</a> = 
+    | String(string)
+    | Number(float)
+    | Array(list(<a href="#type-t">t</a>))
+    | Object(list((string, <a href="#type-t">t</a>)))
+    | True
+    | False
+    | Null</h4>
+
+<div class='body body-empty'></div></div><a href="#Infix-operators-for-easier-working" id="Infix-operators-for-easier-working"><h2>Infix operators for easier working</h2></a>
+
+<div class='doc-item'><h4 class='item module'>module <a href="#module-Infix" id="module-Infix">Infix</a></h4><div class='body module-body'><p><span class='missing'>This module does not have a toplevel documentation block.</span></p>
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|!" id="value-Infix.|!">|!</a> = (option('a), string) => 'a</h4>
+
+<div class='body '><p>The &quot;force unwrap&quot; operator</p>
+<p>If you&#39;re sure there&#39;s a value, you can force it.</p>
+<pre><code>let x: int = Some(10) |! &quot;Expected this to be present&quot;;
+Js.log(x);</code></pre>
+
+<p>But you gotta be sure, otherwise it will throw.</p>
+<pre><code>let x: int = None |! &quot;This will throw&quot;;</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?" id="value-Infix.|?">|?</a> = (option('a), 'a) => 'a</h4>
+
+<div class='body '><p>The &quot;upwrap with default&quot; operator</p>
+<pre><code>let x: int = Some(10) |? 4;
+let y: int = None |? 5;
+Js.log2(x, y);</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>" id="value-Infix.|?>">|?></a> = (option('a), ('a) => option('a)) => option('a)</h4>
+
+<div class='body '><p>The &quot;transform contents into new optional&quot; operator</p>
+<pre><code>let maybeInc = x =&gt; x &gt; 5 ? Some(x + 1) : None;
+let x: option(int) = Some(14) |?&gt; maybeInc;
+let y: option(int) = None |?&gt; maybeInc;</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>>" id="value-Infix.|?>>">|?>></a> = (option('a), ('a) => 'a) => option('a)</h4>
+
+<div class='body '><p>The &quot;transform contents into new value &amp; then re-wrap&quot; operator</p>
+<pre><code>let inc = x =&gt; x + 1;
+let x: option(int) = Some(7) |?&gt;&gt; inc;
+let y: option(int) = None |?&gt;&gt; inc;
+Js.log2(x, y);</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.fold" id="value-Infix.fold">fold</a> = (option('a), 'a, ('a) => 'a) => 'a</h4>
+
+<div class='body '><p>&quot;handle the value if present, otherwise here&#39;s the default&quot;</p>
+<p>It&#39;s called fold because that&#39;s what people call it :?. It&#39;s the same as &quot;transform contents to new value&quot; + &quot;unwrap with default&quot;.</p>
+<pre><code>let inc = x =&gt; x + 1;
+let x: int = fold(Some(4), 10, inc);
+let y: int = fold(None, 2, inc);
+Js.log2(x, y);</code></pre></div></div>
+<p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|!" id="value-Infix.|!">|!</a> = (option('a), string) => 'a</h4>
+
+<div class='body '><p>The &quot;force unwrap&quot; operator</p>
+<p>If you&#39;re sure there&#39;s a value, you can force it.</p>
+<pre><code>let x: int = Some(10) |! &quot;Expected this to be present&quot;;
+Js.log(x);</code></pre>
+
+<p>But you gotta be sure, otherwise it will throw.</p>
+<pre><code>let x: int = None |! &quot;This will throw&quot;;</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?" id="value-Infix.|?">|?</a> = (option('a), 'a) => 'a</h4>
+
+<div class='body '><p>The &quot;upwrap with default&quot; operator</p>
+<pre><code>let x: int = Some(10) |? 4;
+let y: int = None |? 5;
+Js.log2(x, y);</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>" id="value-Infix.|?>">|?></a> = (option('a), ('a) => option('a)) => option('a)</h4>
+
+<div class='body '><p>The &quot;transform contents into new optional&quot; operator</p>
+<pre><code>let maybeInc = x =&gt; x &gt; 5 ? Some(x + 1) : None;
+let x: option(int) = Some(14) |?&gt; maybeInc;
+let y: option(int) = None |?&gt; maybeInc;</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>>" id="value-Infix.|?>>">|?>></a> = (option('a), ('a) => 'a) => option('a)</h4>
+
+<div class='body '><p>The &quot;transform contents into new value &amp; then re-wrap&quot; operator</p>
+<pre><code>let inc = x =&gt; x + 1;
+let x: option(int) = Some(7) |?&gt;&gt; inc;
+let y: option(int) = None |?&gt;&gt; inc;
+Js.log2(x, y);</code></pre></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.fold" id="value-Infix.fold">fold</a> = (option('a), 'a, ('a) => 'a) => 'a</h4>
+
+<div class='body '><p>&quot;handle the value if present, otherwise here&#39;s the default&quot;</p>
+<p>It&#39;s called fold because that&#39;s what people call it :?. It&#39;s the same as &quot;transform contents to new value&quot; + &quot;unwrap with default&quot;.</p>
+<pre><code>let inc = x =&gt; x + 1;
+let x: int = fold(Some(4), 10, inc);
+let y: int = fold(None, 2, inc);
+Js.log2(x, y);</code></pre></div></div></div></div><p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-string_of_number" id="value-string_of_number">string_of_number</a> = (float) => string</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-unwrap" id="value-unwrap">unwrap</a> = (string, option('a)) => 'a</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-bind" id="value-bind">bind</a> = (option('a), ('a) => option('a)) => option('a)</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-parsePath" id="value-parsePath">parsePath</a> = (list(string), <a href="#type-t">t</a>) => <a href="#type-t">t</a></h4>
+
+<div class='body body-empty'></div></div>
+    </div>
+    <div class='right-blank'></div>
+    </div>
+  
