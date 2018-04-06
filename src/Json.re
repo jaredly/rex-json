@@ -115,7 +115,7 @@ let module Infix = {
 };
 
 /** ```
- * let text = {|{"hello": "folks", "aa": [2, 3, "four"|};
+ * let text = {|{"hello": "folks", "aa": [2, 3, "four"]}|};
  * let result = Json.stringify(Json.parse(text));
  * Js.log(result);
  * assert(text == result);
