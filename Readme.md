@@ -1,4 +1,6 @@
-# A simple cross-target JSON library for Reason/OCaml
+# Rex Json
+
+> A simple cross-target JSON library for Reason/OCaml
 
 Works with both native and js targets (compiled with bsb-native).
 
@@ -31,16 +33,15 @@ let data = {|
 let json = Json.parse(data);
 let simple = Json.get("some", json); /* == Some(String("json")) */
 
-/** Yay get us a bind of optionals */
-let (|>>) = Json.bind;
+open Json.Infix;
 
 let stuff = json
   |> Json.get("nested")
-  |>> Json.nth(0)
-  |>> Json.get("and")
-  |>> Json.nth(2)
-  |>> Json.get("stuff")
-  |>> Json.number; /* == Some(5.) */
+  |?> Json.nth(0)
+  |?> Json.get("and")
+  |?> Json.nth(2)
+  |?> Json.get("stuff")
+  |?> Json.number; /* == Some(5.) */
 
 /** Using a json path for nested objects */
 let nestedObj = json |> Json.getPath("this.object.is.really"); /* Some(String("nested")) */

@@ -22,7 +22,7 @@
       <div class='docs-listing'><a href="./index.html">Home</a></div>
       <div class='table-of-contents'>
       <div class='toc-header'>Page Contents</div>
-      <a href="#a-simple-cross-target-json-library-for-reason-ocaml" class='level-1 header'>A simple cross-target JSON library for Reason/OCaml</a>
+      <a href="#rex-json" class='level-1 header'>Rex Json</a>
 <a href="#installation" class='level-2 header'>Installation</a>
 <a href="#usage-" class='level-2 header'>Usage:</a>
       </div>
@@ -35,7 +35,10 @@
   
     <div class='main'>
     <a href="https://github.com/jaredly/rex-json/blob/master/docs/./index.md" class="edit-link">Edit</a>
-    <a href="#a-simple-cross-target-json-library-for-reason-ocaml" id="a-simple-cross-target-json-library-for-reason-ocaml"><h1>A simple cross-target JSON library for Reason/OCaml</h1></a>
+    <a href="#rex-json" id="rex-json"><h1>Rex Json</h1></a>
+
+<blockquote><p>A simple cross-target JSON library for Reason/OCaml</p>
+</blockquote>
 
 <p>Works with both native and js targets (compiled with bsb-native).</p>
 <p>Why would you want this library?</p>
@@ -61,16 +64,15 @@
 let <span class='pattern-ident'>json</span> = <span class='ident'>Json.parse</span>(<span class='ident'>data</span>);
 let <span class='pattern-ident'>simple</span> = <span class='ident'>Json.get</span>(<span class='string'>&quot;some&quot;</span>, <span class='ident'>json</span>); /* == Some(String(&quot;json&quot;)) */
 
-/** Yay get us a bind of optionals */
-let <span class='pattern-ident'>(|&gt;&gt;)</span> = <span class='ident'>Json.bind</span>;
+open Json.Infix;
 
 let <span class='pattern-ident'>stuff</span> = <span class='ident'>json</span>
   <span class='operator'>|&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;nested&quot;</span>)
-  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>0</span>)
-  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;and&quot;</span>)
-  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>2</span>)
-  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;stuff&quot;</span>)
-  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.number</span>; /* == Some(5.) */
+  <span class='operator'>|?&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>0</span>)
+  <span class='operator'>|?&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;and&quot;</span>)
+  <span class='operator'>|?&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>2</span>)
+  <span class='operator'>|?&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;stuff&quot;</span>)
+  <span class='operator'>|?&gt;</span> <span class='ident'>Json.number</span>; /* == Some(5.) */
 
 /** Using a json path for nested objects */
 let <span class='pattern-ident'>nestedObj</span> = <span class='ident'>json</span> <span class='operator'>|&gt;</span> <span class='ident'>Json.getPath</span>(<span class='string'>&quot;this.object.is.really&quot;</span>); /* Some(String(&quot;nested&quot;)) */
