@@ -183,6 +183,16 @@ let rec skipToNewline = (text, pos) => {
   }
 };
 
+let rec skipToCloseMultilineComment = (text, pos) => {
+  if (pos + 1 >= String.length(text)) {
+    failwith("Unterminated comment")
+  } else if (text.[pos] == '*' && text.[pos + 1] == '/') {
+    pos + 2
+  } else {
+    skipToCloseMultilineComment(text, pos + 1)
+  }
+};
+
 let rec skipWhite = (text, pos) => {
   if (pos < String.length(text) && (text.[pos] == ' ' || text.[pos] == '\t' || text.[pos] == '\n')) {
     skipWhite(text, pos + 1)
@@ -222,7 +232,11 @@ let expect = (char, text, pos, message) => {
 
 let parseComment: 'a . (string, int, (string, int) => 'a) => 'a = (text, pos, next) => {
   if (text.[pos] != '/') {
-    failwith("Invalid syntax")
+    if (text.[pos] == '*') {
+      next(text, skipToCloseMultilineComment(text, pos + 1))
+    } else {
+      failwith("Invalid syntax")
+    }
   } else {
     next(text, skipToNewline(text, pos + 1))
   }
@@ -232,6 +246,8 @@ let maybeSkipComment = (text, pos) => {
   if (pos < String.length(text) && text.[pos] == '/') {
     if (pos + 1 < String.length(text) && text.[pos + 1] == '/') {
       skipToNewline(text, pos + 1)
+    } else if (pos + 1 < String.length(text) && text.[pos + 1] == '*') {
+      skipToCloseMultilineComment(text, pos + 1)
     } else {
       fail(text, pos, "Invalid synatx")
     }

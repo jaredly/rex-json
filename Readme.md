@@ -18,6 +18,8 @@ let data = {|
 {
   "some": "json", // with a comment!
   "more": [1,3,],
+  /* also
+  multi-line comment */
   "this": {
     "object": {
       "is": {
