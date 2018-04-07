@@ -45,7 +45,7 @@
 <ul><li>you want minimal dependencies</li><li>you want forgiving json parsing (comments, trailing commas allowed)</li><li>you&#39;re fine with &quot;good enough&quot; performance</li></ul>
 
 <a href="#installation" id="installation"><h2>Installation</h2></a><p>Add <code>rex-json</code> to your <code>package.json</code> and your <code>bsconfig.json</code>.</p>
-<a href="#usage-" id="usage-"><h2>Usage:</h2></a><pre class='code'><code>let <span class='pattern-ident'>data</span> = <span class='string'>{|
+<a href="#usage-" id="usage-"><h2>Usage:</h2></a><pre class='code'><code>let <span class='pattern-ident' data-type="string">data</span> = <span class='string' data-type="string">{|
 {
   &quot;some&quot;: &quot;json&quot;, // with a comment!
   &quot;more&quot;: [1,3,],
@@ -61,23 +61,23 @@
   }], // trailing commas!
 }
 |}</span>;
-let <span class='pattern-ident'>json</span> = <span class='ident'>Json.parse</span>(<span class='ident'>data</span>);
-let <span class='pattern-ident'>simple</span> = <span class='ident'>Json.get</span>(<span class='string'>&quot;some&quot;</span>, <span class='ident'>json</span>); /* == Some(String(&quot;json&quot;)) */
+let <span class='pattern-ident' data-type="Json.t">json</span> = <span class='ident' data-type="string => Json.t">Json.parse</span>(<span class='ident' data-type="string">data</span>);
+let <span class='pattern-ident' data-type="option(Json.t)">simple</span> = <span class='ident' data-type="(string, Json.t) => option(Json.t)">Json.get</span>(<span class='string' data-type="string">&quot;some&quot;</span>, <span class='ident' data-type="Json.t">json</span>); /* == Some(String(&quot;json&quot;)) */
 
 open Json.Infix;
 
-let <span class='pattern-ident'>stuff</span> = <span class='ident'>json</span>
-  <span class='operator'>|&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;nested&quot;</span>)
-  <span class='operator'>|?&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>0</span>)
-  <span class='operator'>|?&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;and&quot;</span>)
-  <span class='operator'>|?&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>2</span>)
-  <span class='operator'>|?&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;stuff&quot;</span>)
-  <span class='operator'>|?&gt;</span> <span class='ident'>Json.number</span>; /* == Some(5.) */
+let <span class='pattern-ident' data-type="option(float)">stuff</span> = <span class='ident' data-type="Json.t">json</span>
+  <span class='operator' data-type="(Json.t, Json.t => option(Json.t)) => option(Json.t)">|&gt;</span> <span class='ident' data-type="(string, Json.t) => option(Json.t)">Json.get</span>(<span class='string' data-type="string">&quot;nested&quot;</span>)
+  <span class='operator' data-type="(option(Json.t), Json.t => option(Json.t)) => option(Json.t)">|?&gt;</span> <span class='ident' data-type="(int, Json.t) => option(Json.t)">Json.nth</span>(<span class='int' data-type="int">0</span>)
+  <span class='operator' data-type="(option(Json.t), Json.t => option(Json.t)) => option(Json.t)">|?&gt;</span> <span class='ident' data-type="(string, Json.t) => option(Json.t)">Json.get</span>(<span class='string' data-type="string">&quot;and&quot;</span>)
+  <span class='operator' data-type="(option(Json.t), Json.t => option(Json.t)) => option(Json.t)">|?&gt;</span> <span class='ident' data-type="(int, Json.t) => option(Json.t)">Json.nth</span>(<span class='int' data-type="int">2</span>)
+  <span class='operator' data-type="(option(Json.t), Json.t => option(Json.t)) => option(Json.t)">|?&gt;</span> <span class='ident' data-type="(string, Json.t) => option(Json.t)">Json.get</span>(<span class='string' data-type="string">&quot;stuff&quot;</span>)
+  <span class='operator' data-type="(option(Json.t), Json.t => option(float)) => option(float)">|?&gt;</span> <span class='ident' data-type="Json.t => option(float)">Json.number</span>; /* == Some(5.) */
 
 /** Using a json path for nested objects */
-let <span class='pattern-ident'>nestedObj</span> = <span class='ident'>json</span> <span class='operator'>|&gt;</span> <span class='ident'>Json.getPath</span>(<span class='string'>&quot;this.object.is.really&quot;</span>); /* Some(String(&quot;nested&quot;)) */
+let <span class='pattern-ident' data-type="option(Json.t)">nestedObj</span> = <span class='ident' data-type="Json.t">json</span> <span class='operator' data-type="(Json.t, Json.t => option(Json.t)) => option(Json.t)">|&gt;</span> <span class='ident' data-type="(string, Json.t) => option(Json.t)">Json.getPath</span>(<span class='string' data-type="string">&quot;this.object.is.really&quot;</span>); /* Some(String(&quot;nested&quot;)) */
 
-let <span class='pattern-ident'>str</span> = <span class='ident'>Json.stringify</span>(<span class='ident'>json</span>); /* back to a string */</code></pre>
+let <span class='pattern-ident' data-type="string">str</span> = <span class='ident' data-type="Json.t => string">Json.stringify</span>(<span class='ident' data-type="Json.t">json</span>); /* back to a string */</code></pre>
     </div>
     <div class='right-blank'></div>
     </div>

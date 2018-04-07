@@ -67,23 +67,23 @@
 <a href="#Basics" id="Basics"><h2>Basics</h2></a>
 
 <pre class='code'><code>open Json.Infix; /* for the nice infix operators */
-let <span class='pattern-ident'>raw</span> = <span class='string'>{|{&quot;hello&quot;: &quot;folks&quot;}|}</span>;
-let <span class='pattern-ident'>who</span> = <span class='ident'>Json.parse</span>(<span class='ident'>raw</span>) <span class='operator'>|&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;hello&quot;</span>) <span class='operator'>|?&gt;</span> <span class='ident'>Json.string</span>;
-<span class='ident'>Js.log</span>(<span class='ident'>who</span>);</code></pre>
+let <span class='pattern-ident' data-type="string">raw</span> = <span class='string' data-type="string">{|{&quot;hello&quot;: &quot;folks&quot;}|}</span>;
+let <span class='pattern-ident' data-type="option(string)">who</span> = <span class='ident' data-type="string => Json.t">Json.parse</span>(<span class='ident' data-type="string">raw</span>) <span class='operator' data-type="(Json.t, Json.t => option(Json.t)) => option(Json.t)">|&gt;</span> <span class='ident' data-type="(string, Json.t) => option(Json.t)">Json.get</span>(<span class='string' data-type="string">&quot;hello&quot;</span>) <span class='operator' data-type="(option(Json.t), Json.t => option(string)) => option(string)">|?&gt;</span> <span class='ident' data-type="Json.t => option(string)">Json.string</span>;
+<span class='ident' data-type="option(string) => unit">Js.log</span>(<span class='ident' data-type="option(string)">who</span>);</code></pre>
 
 <a href="#Parse--amp--stringify" id="Parse--amp--stringify"><h2>Parse &amp; stringify</h2></a>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-parse" id="value-parse">parse</a> = (string) => <a href="#type-t">t</a></h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-parse" id="value-parse">parse</a> = string => <a href="#type-t">t</a></h4>
 
 <div class='body '><p> Turns some text into a json object. throws on failure</p>
 </div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-stringify" id="value-stringify">stringify</a> = (<a href="#type-t">t</a>) => string</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-stringify" id="value-stringify">stringify</a> = <a href="#type-t">t</a> => string</h4>
 
-<div class='body '><pre class='code'><code>let <span class='pattern-ident'>text</span> = <span class='string'>{|{&quot;hello&quot;: &quot;folks&quot;, &quot;aa&quot;: [2, 3, &quot;four&quot;]}|}</span>;
-let <span class='pattern-ident'>result</span> = <span class='ident'>Json.stringify</span>(<span class='ident'>Json.parse</span>(<span class='ident'>text</span>));
-<span class='ident'>Js.log</span>(<span class='ident'>result</span>);
-assert(<span class='ident'>text</span> <span class='operator'>==</span> <span class='ident'>result</span>);</code></pre></div></div><a href="#Accessing-descendents" id="Accessing-descendents"><h2>Accessing descendents</h2></a>
+<div class='body '><pre class='code'><code>let <span class='pattern-ident' data-type="string">text</span> = <span class='string' data-type="string">{|{&quot;hello&quot;: &quot;folks&quot;, &quot;aa&quot;: [2, 3, &quot;four&quot;]}|}</span>;
+let <span class='pattern-ident' data-type="string">result</span> = <span class='ident' data-type="Json.t => string">Json.stringify</span>(<span class='ident' data-type="string => Json.t">Json.parse</span>(<span class='ident' data-type="string">text</span>));
+<span class='ident' data-type="string => unit">Js.log</span>(<span class='ident' data-type="string">result</span>);
+assert(<span class='ident' data-type="string">text</span> <span class='operator' data-type="(string, string) => bool">==</span> <span class='ident' data-type="string">result</span>);</code></pre></div></div><a href="#Accessing-descendents" id="Accessing-descendents"><h2>Accessing descendents</h2></a>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-get" id="value-get">get</a> = (string, <a href="#type-t">t</a>) => option(<a href="#type-t">t</a>)</h4>
 
@@ -99,31 +99,31 @@ assert(<span class='ident'>text</span> <span class='operator'>==</span> <span cl
 
 <div class='body '><p>Get a deeply nested value from an object <code>t</code>.</p>
 <pre class='code'><code>open Json.Infix;
-let <span class='pattern-ident'>json</span> = <span class='ident'>Json.parse</span>(<span class='string'>{|{&quot;a&quot;: {&quot;b&quot;: {&quot;c&quot;: 2}}}|}</span>);
-let <span class='pattern-ident'>num</span> = <span class='ident'>Json.getPath</span>(<span class='string'>&quot;a.b.c&quot;</span>, <span class='ident'>json</span>) <span class='operator'>|?&gt;</span> <span class='ident'>Json.number</span>;
-assert(<span class='ident'>num</span> <span class='operator'>==</span> <span class='constructor'>Some</span>(<span class='float'>2.</span>))</code></pre></div></div><a href="#Coercing-to-types" id="Coercing-to-types"><h2>Coercing to types</h2></a>
+let <span class='pattern-ident' data-type="Json.t">json</span> = <span class='ident' data-type="string => Json.t">Json.parse</span>(<span class='string' data-type="string">{|{&quot;a&quot;: {&quot;b&quot;: {&quot;c&quot;: 2}}}|}</span>);
+let <span class='pattern-ident' data-type="option(float)">num</span> = <span class='ident' data-type="(string, Json.t) => option(Json.t)">Json.getPath</span>(<span class='string' data-type="string">&quot;a.b.c&quot;</span>, <span class='ident' data-type="Json.t">json</span>) <span class='operator' data-type="(option(Json.t), Json.t => option(float)) => option(float)">|?&gt;</span> <span class='ident' data-type="Json.t => option(float)">Json.number</span>;
+assert(<span class='ident' data-type="option(float)">num</span> <span class='operator' data-type="(option(float), option(float)) => bool">==</span> <span class='constructor' data-type="option(float)">Some</span>(<span class='float' data-type="float">2.</span>))</code></pre></div></div><a href="#Coercing-to-types" id="Coercing-to-types"><h2>Coercing to types</h2></a>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-string" id="value-string">string</a> = (<a href="#type-t">t</a>) => option(string)</h4>
-
-<div class='body body-empty'></div></div>
-
-<div class='doc-item'><h4 class='item'>let <a href="#value-number" id="value-number">number</a> = (<a href="#type-t">t</a>) => option(float)</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-string" id="value-string">string</a> = <a href="#type-t">t</a> => option(string)</h4>
 
 <div class='body body-empty'></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-array" id="value-array">array</a> = (<a href="#type-t">t</a>) => option(list(<a href="#type-t">t</a>))</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-number" id="value-number">number</a> = <a href="#type-t">t</a> => option(float)</h4>
 
 <div class='body body-empty'></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-obj" id="value-obj">obj</a> = (<a href="#type-t">t</a>) => option(list((string, <a href="#type-t">t</a>)))</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-array" id="value-array">array</a> = <a href="#type-t">t</a> => option(list(<a href="#type-t">t</a>))</h4>
 
 <div class='body body-empty'></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-bool" id="value-bool">bool</a> = (<a href="#type-t">t</a>) => option(bool)</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-obj" id="value-obj">obj</a> = <a href="#type-t">t</a> => option(list((string, <a href="#type-t">t</a>)))</h4>
 
 <div class='body body-empty'></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-null" id="value-null">null</a> = (<a href="#type-t">t</a>) => option(unit)</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-bool" id="value-bool">bool</a> = <a href="#type-t">t</a> => option(bool)</h4>
+
+<div class='body body-empty'></div></div>
+
+<div class='doc-item'><h4 class='item'>let <a href="#value-null" id="value-null">null</a> = <a href="#type-t">t</a> => option(unit)</h4>
 
 <div class='body body-empty'></div></div><a href="#The-JSON-type" id="The-JSON-type"><h2>The JSON type</h2></a>
 
@@ -144,48 +144,48 @@ assert(<span class='ident'>num</span> <span class='operator'>==</span> <span cla
 <div class='body '><p>The &quot;force unwrap&quot; operator</p>
 <p>If you&#39;re sure there&#39;s a value, you can force it.</p>
 <pre class='code'><code>open Json.Infix;
-let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='constructor'>Some</span>(<span class='int'>10</span>) <span class='operator'>|!</span> <span class='string'>&quot;Expected this to be present&quot;</span>;
-<span class='ident'>Js.log</span>(<span class='ident'>x</span>);</code></pre>
+let <span class='pattern-ident' data-type="int">x</span>: <span class='type-constructor'>int</span> = <span class='constructor' data-type="option(int)">Some</span>(<span class='int' data-type="int">10</span>) <span class='operator' data-type="(option(int), string) => int">|!</span> <span class='string' data-type="string">&quot;Expected this to be present&quot;</span>;
+<span class='ident' data-type="int => unit">Js.log</span>(<span class='ident' data-type="int">x</span>);</code></pre>
 
 <p>But you gotta be sure, otherwise it will throw.</p>
 <pre class='code'><code>open Json.Infix;
-let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='constructor'>None</span> <span class='operator'>|!</span> <span class='string'>&quot;This will throw&quot;</span>;</code></pre></div></div>
+let <span class='pattern-ident' data-type="int">x</span>: <span class='type-constructor'>int</span> = <span class='constructor' data-type="option(int)">None</span> <span class='operator' data-type="(option(int), string) => int">|!</span> <span class='string' data-type="string">&quot;This will throw&quot;</span>;</code></pre></div></div>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?" id="value-Infix.|?">|?</a> = (option('a), 'a) => 'a</h4>
 
 <div class='body '><p>The &quot;upwrap with default&quot; operator</p>
 <pre class='code'><code>open Json.Infix;
-let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='constructor'>Some</span>(<span class='int'>10</span>) <span class='operator'>|?</span> <span class='int'>4</span>;
-let <span class='pattern-ident'>y</span>: <span class='type-constructor'>int</span> = <span class='constructor'>None</span> <span class='operator'>|?</span> <span class='int'>5</span>;
-<span class='ident'>Js.log2</span>(<span class='ident'>x</span>, <span class='ident'>y</span>);</code></pre></div></div>
+let <span class='pattern-ident' data-type="int">x</span>: <span class='type-constructor'>int</span> = <span class='constructor' data-type="option(int)">Some</span>(<span class='int' data-type="int">10</span>) <span class='operator' data-type="(option(int), int) => int">|?</span> <span class='int' data-type="int">4</span>;
+let <span class='pattern-ident' data-type="int">y</span>: <span class='type-constructor'>int</span> = <span class='constructor' data-type="option(int)">None</span> <span class='operator' data-type="(option(int), int) => int">|?</span> <span class='int' data-type="int">5</span>;
+<span class='ident' data-type="(int, int) => unit">Js.log2</span>(<span class='ident' data-type="int">x</span>, <span class='ident' data-type="int">y</span>);</code></pre></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>" id="value-Infix.|?>">|?></a> = (option('a), ('a) => option('a)) => option('a)</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>" id="value-Infix.|?>">|?></a> = (option('a), 'a => option('a)) => option('a)</h4>
 
 <div class='body '><p>The &quot;transform contents into new optional&quot; operator</p>
 <pre class='code'><code>open Json.Infix;
-let <span class='pattern-ident'>maybeInc</span> = <span class='pattern-ident'>x</span> =&gt; <span class='ident'>x</span> <span class='operator'>&gt;</span> <span class='int'>5</span> <span class='patern-constructor'>?</span> <span class='constructor'>Some</span>(<span class='ident'>x</span> <span class='operator'>+</span> <span class='int'>1</span>) <span class='patern-constructor'>:</span> <span class='constructor'>None</span>;
-let <span class='pattern-ident'>x</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>Some</span>(<span class='int'>14</span>) <span class='operator'>|?&gt;</span> <span class='ident'>maybeInc</span>;
-let <span class='pattern-ident'>y</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>None</span> <span class='operator'>|?&gt;</span> <span class='ident'>maybeInc</span>;</code></pre></div></div>
+let <span class='pattern-ident' data-type="int => option(int)">maybeInc</span> = <span class='pattern-ident' data-type="int">x</span> =&gt; <span class='ident' data-type="int">x</span> <span class='operator' data-type="(int, int) => bool">&gt;</span> <span class='int' data-type="int">5</span> <span class='patern-constructor' data-type="bool">?</span> <span class='constructor' data-type="option(int)">Some</span>(<span class='ident' data-type="int">x</span> <span class='operator' data-type="(int, int) => int">+</span> <span class='int' data-type="int">1</span>) <span class='patern-constructor' data-type="bool">:</span> <span class='constructor' data-type="option(int)">None</span>;
+let <span class='pattern-ident' data-type="option(int)">x</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor' data-type="option(int)">Some</span>(<span class='int' data-type="int">14</span>) <span class='operator' data-type="(option(int), int => option(int)) => option(int)">|?&gt;</span> <span class='ident' data-type="int => option(int)">maybeInc</span>;
+let <span class='pattern-ident' data-type="option(int)">y</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor' data-type="option(int)">None</span> <span class='operator' data-type="(option(int), int => option(int)) => option(int)">|?&gt;</span> <span class='ident' data-type="int => option(int)">maybeInc</span>;</code></pre></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>>" id="value-Infix.|?>>">|?>></a> = (option('a), ('a) => 'a) => option('a)</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>>" id="value-Infix.|?>>">|?>></a> = (option('a), 'a => 'a) => option('a)</h4>
 
 <div class='body '><p>The &quot;transform contents into new value &amp; then re-wrap&quot; operator</p>
 <pre class='code'><code>open Json.Infix;
-let <span class='pattern-ident'>inc</span> = <span class='pattern-ident'>x</span> =&gt; <span class='ident'>x</span> <span class='operator'>+</span> <span class='int'>1</span>;
-let <span class='pattern-ident'>x</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>Some</span>(<span class='int'>7</span>) <span class='operator'>|?&gt;&gt;</span> <span class='ident'>inc</span>;
-let <span class='pattern-ident'>y</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>None</span> <span class='operator'>|?&gt;&gt;</span> <span class='ident'>inc</span>;
-<span class='ident'>Js.log2</span>(<span class='ident'>x</span>, <span class='ident'>y</span>);</code></pre></div></div>
+let <span class='pattern-ident' data-type="int => int">inc</span> = <span class='pattern-ident' data-type="int">x</span> =&gt; <span class='ident' data-type="int">x</span> <span class='operator' data-type="(int, int) => int">+</span> <span class='int' data-type="int">1</span>;
+let <span class='pattern-ident' data-type="option(int)">x</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor' data-type="option(int)">Some</span>(<span class='int' data-type="int">7</span>) <span class='operator' data-type="(option(int), int => int) => option(int)">|?&gt;&gt;</span> <span class='ident' data-type="int => int">inc</span>;
+let <span class='pattern-ident' data-type="option(int)">y</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor' data-type="option(int)">None</span> <span class='operator' data-type="(option(int), int => int) => option(int)">|?&gt;&gt;</span> <span class='ident' data-type="int => int">inc</span>;
+<span class='ident' data-type="(option(int), option(int)) => unit">Js.log2</span>(<span class='ident' data-type="option(int)">x</span>, <span class='ident' data-type="option(int)">y</span>);</code></pre></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.fold" id="value-Infix.fold">fold</a> = (option('a), 'a, ('a) => 'a) => 'a</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-Infix.fold" id="value-Infix.fold">fold</a> = (option('a), 'a, 'a => 'a) => 'a</h4>
 
 <div class='body '><p>&quot;handle the value if present, otherwise here&#39;s the default&quot;</p>
 <p>It&#39;s called fold because that&#39;s what people call it :?. It&#39;s the same as &quot;transform contents to new value&quot; + &quot;unwrap with default&quot;.</p>
 <pre class='code'><code>open Json.Infix;
-let <span class='pattern-ident'>inc</span> = <span class='pattern-ident'>x</span> =&gt; <span class='ident'>x</span> <span class='operator'>+</span> <span class='int'>1</span>;
-let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='ident'>fold</span>(<span class='constructor'>Some</span>(<span class='int'>4</span>), <span class='int'>10</span>, <span class='ident'>inc</span>);
-let <span class='pattern-ident'>y</span>: <span class='type-constructor'>int</span> = <span class='ident'>fold</span>(<span class='constructor'>None</span>, <span class='int'>2</span>, <span class='ident'>inc</span>);
-<span class='ident'>Js.log2</span>(<span class='ident'>x</span>, <span class='ident'>y</span>);</code></pre></div></div>
-</div></div><p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-string_of_number" id="value-string_of_number">string_of_number</a> = (float) => string</h4>
+let <span class='pattern-ident' data-type="int => int">inc</span> = <span class='pattern-ident' data-type="int">x</span> =&gt; <span class='ident' data-type="int">x</span> <span class='operator' data-type="(int, int) => int">+</span> <span class='int' data-type="int">1</span>;
+let <span class='pattern-ident' data-type="int">x</span>: <span class='type-constructor'>int</span> = <span class='ident' data-type="(option(int), int, int => int) => int">fold</span>(<span class='constructor' data-type="option(int)">Some</span>(<span class='int' data-type="int">4</span>), <span class='int' data-type="int">10</span>, <span class='ident' data-type="int => int">inc</span>);
+let <span class='pattern-ident' data-type="int">y</span>: <span class='type-constructor'>int</span> = <span class='ident' data-type="(option(int), int, int => int) => int">fold</span>(<span class='constructor' data-type="option(int)">None</span>, <span class='int' data-type="int">2</span>, <span class='ident' data-type="int => int">inc</span>);
+<span class='ident' data-type="(int, int) => unit">Js.log2</span>(<span class='ident' data-type="int">x</span>, <span class='ident' data-type="int">y</span>);</code></pre></div></div>
+</div></div><p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-string_of_number" id="value-string_of_number">string_of_number</a> = float => string</h4>
 
 <div class='body body-empty'></div></div>
 
@@ -193,7 +193,7 @@ let <span class='pattern-ident'>y</span>: <span class='type-constructor'>int</sp
 
 <div class='body body-empty'></div></div>
 
-<div class='doc-item'><h4 class='item'>let <a href="#value-bind" id="value-bind">bind</a> = (option('a), ('a) => option('a)) => option('a)</h4>
+<div class='doc-item'><h4 class='item'>let <a href="#value-bind" id="value-bind">bind</a> = (option('a), 'a => option('a)) => option('a)</h4>
 
 <div class='body body-empty'></div></div>
 

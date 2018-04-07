@@ -45,6 +45,7 @@ pre {
 
 pre > code,
 h4.item,
+.type-viewer,
 p code {
   font-family: 'SF Mono', Menlo, monospace;
   letter-spacing: 0;
@@ -136,7 +137,7 @@ a:hover, a:focus {
 .edit-link {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 16px;
   margin: 24px 0;
 }
 
@@ -374,5 +375,22 @@ pre.code {
 .code .operator {
   color: #9b9bff;
   font-weight: bold;
+}
+
+.type-hovered {
+  text-decoration: underline;
+}
+
+.type-viewer {
+  position: absolute;
+  display: none;
+  background-color: white;
+  white-space: pre;
+  padding: 8px 16px;
+  pointer-events: none;
+  margin-top: 10px;
+  margin-left: 10px;
+  box-shadow: 0 1px 6px #555;
+  border-radius: 3px;
 }
 
