@@ -42,7 +42,7 @@
 <ul><li>you want minimal dependencies</li><li>you want forgiving json parsing (comments, trailing commas allowed)</li><li>you&#39;re fine with &quot;good enough&quot; performance</li></ul>
 
 <a href="#installation" id="installation"><h2>Installation</h2></a><p>Add <code>rex-json</code> to your <code>package.json</code> and your <code>bsconfig.json</code>.</p>
-<a href="#usage-" id="usage-"><h2>Usage:</h2></a><pre class='code' data-code-id='9'><code>let data = {|
+<a href="#usage-" id="usage-"><h2>Usage:</h2></a><pre class='code'><code>let <span class='pattern-ident'>data</span> = <span class='string'>{|
 {
   &quot;some&quot;: &quot;json&quot;, // with a comment!
   &quot;more&quot;: [1,3,],
@@ -57,25 +57,25 @@
     &quot;and&quot;: [1,2,{&quot;stuff&quot;: 5}]
   }], // trailing commas!
 }
-|};
-let json = Json.parse(data);
-let simple = Json.get(&quot;some&quot;, json); /* == Some(String(&quot;json&quot;)) */
+|}</span>;
+let <span class='pattern-ident'>json</span> = <span class='ident'>Json.parse</span>(<span class='ident'>data</span>);
+let <span class='pattern-ident'>simple</span> = <span class='ident'>Json.get</span>(<span class='string'>&quot;some&quot;</span>, <span class='ident'>json</span>); /* == Some(String(&quot;json&quot;)) */
 
 /** Yay get us a bind of optionals */
-let (|&gt;&gt;) = Json.bind;
+let <span class='pattern-ident'>(|&gt;&gt;)</span> = <span class='ident'>Json.bind</span>;
 
-let stuff = json
-  |&gt; Json.get(&quot;nested&quot;)
-  |&gt;&gt; Json.nth(0)
-  |&gt;&gt; Json.get(&quot;and&quot;)
-  |&gt;&gt; Json.nth(2)
-  |&gt;&gt; Json.get(&quot;stuff&quot;)
-  |&gt;&gt; Json.number; /* == Some(5.) */
+let <span class='pattern-ident'>stuff</span> = <span class='ident'>json</span>
+  <span class='operator'>|&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;nested&quot;</span>)
+  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>0</span>)
+  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;and&quot;</span>)
+  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.nth</span>(<span class='int'>2</span>)
+  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;stuff&quot;</span>)
+  <span class='operator'>|&gt;&gt;</span> <span class='ident'>Json.number</span>; /* == Some(5.) */
 
 /** Using a json path for nested objects */
-let nestedObj = json |&gt; Json.getPath(&quot;this.object.is.really&quot;); /* Some(String(&quot;nested&quot;)) */
+let <span class='pattern-ident'>nestedObj</span> = <span class='ident'>json</span> <span class='operator'>|&gt;</span> <span class='ident'>Json.getPath</span>(<span class='string'>&quot;this.object.is.really&quot;</span>); /* Some(String(&quot;nested&quot;)) */
 
-let str = Json.stringify(json); /* back to a string */</code></pre>
+let <span class='pattern-ident'>str</span> = <span class='ident'>Json.stringify</span>(<span class='ident'>json</span>); /* back to a string */</code></pre>
     </div>
     <div class='right-blank'></div>
     </div>

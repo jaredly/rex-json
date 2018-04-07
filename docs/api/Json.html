@@ -66,10 +66,10 @@
 <p>Works with bucklescript and bsb-native</p>
 <a href="#Basics" id="Basics"><h2>Basics</h2></a>
 
-<pre class='code' data-code-id='0'><code>open Json.Infix; /* for the nice infix operators */
-let raw = {|{&quot;hello&quot;: &quot;folks&quot;}|};
-let who = Json.parse(raw) |&gt; Json.get(&quot;hello&quot;) |?&gt; Json.string;
-Js.log(who);</code></pre>
+<pre class='code'><code>open Json.Infix; /* for the nice infix operators */
+let <span class='pattern-ident'>raw</span> = <span class='string'>{|{&quot;hello&quot;: &quot;folks&quot;}|}</span>;
+let <span class='pattern-ident'>who</span> = <span class='ident'>Json.parse</span>(<span class='ident'>raw</span>) <span class='operator'>|&gt;</span> <span class='ident'>Json.get</span>(<span class='string'>&quot;hello&quot;</span>) <span class='operator'>|?&gt;</span> <span class='ident'>Json.string</span>;
+<span class='ident'>Js.log</span>(<span class='ident'>who</span>);</code></pre>
 
 <a href="#Parse--amp--stringify" id="Parse--amp--stringify"><h2>Parse &amp; stringify</h2></a>
 
@@ -80,10 +80,10 @@ Js.log(who);</code></pre>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-stringify" id="value-stringify">stringify</a> = (<a href="#type-t">t</a>) => string</h4>
 
-<div class='body '><pre class='code' data-code-id='1'><code>let text = {|{&quot;hello&quot;: &quot;folks&quot;, &quot;aa&quot;: [2, 3, &quot;four&quot;]}|};
-let result = Json.stringify(Json.parse(text));
-Js.log(result);
-assert(text == result);</code></pre></div></div><a href="#Accessing-descendents" id="Accessing-descendents"><h2>Accessing descendents</h2></a>
+<div class='body '><pre class='code'><code>let <span class='pattern-ident'>text</span> = <span class='string'>{|{&quot;hello&quot;: &quot;folks&quot;, &quot;aa&quot;: [2, 3, &quot;four&quot;]}|}</span>;
+let <span class='pattern-ident'>result</span> = <span class='ident'>Json.stringify</span>(<span class='ident'>Json.parse</span>(<span class='ident'>text</span>));
+<span class='ident'>Js.log</span>(<span class='ident'>result</span>);
+assert(<span class='ident'>text</span> <span class='operator'>==</span> <span class='ident'>result</span>);</code></pre></div></div><a href="#Accessing-descendents" id="Accessing-descendents"><h2>Accessing descendents</h2></a>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-get" id="value-get">get</a> = (string, <a href="#type-t">t</a>) => option(<a href="#type-t">t</a>)</h4>
 
@@ -98,10 +98,10 @@ assert(text == result);</code></pre></div></div><a href="#Accessing-descendents"
 <div class='doc-item'><h4 class='item'>let <a href="#value-getPath" id="value-getPath">getPath</a> = (string, <a href="#type-t">t</a>) => option(<a href="#type-t">t</a>)</h4>
 
 <div class='body '><p>Get a deeply nested value from an object <code>t</code>.</p>
-<pre class='code' data-code-id='2'><code>open Json.Infix;
-let json = Json.parse({|{&quot;a&quot;: {&quot;b&quot;: {&quot;c&quot;: 2}}}|});
-let num = Json.getPath(&quot;a.b.c&quot;, json) |?&gt; Json.number;
-assert(num == Some(2.))</code></pre></div></div><a href="#Coercing-to-types" id="Coercing-to-types"><h2>Coercing to types</h2></a>
+<pre class='code'><code>open Json.Infix;
+let <span class='pattern-ident'>json</span> = <span class='ident'>Json.parse</span>(<span class='string'>{|{&quot;a&quot;: {&quot;b&quot;: {&quot;c&quot;: 2}}}|}</span>);
+let <span class='pattern-ident'>num</span> = <span class='ident'>Json.getPath</span>(<span class='string'>&quot;a.b.c&quot;</span>, <span class='ident'>json</span>) <span class='operator'>|?&gt;</span> <span class='ident'>Json.number</span>;
+assert(<span class='ident'>num</span> <span class='operator'>==</span> <span class='constructor'>Some</span>(<span class='float'>2.</span>))</code></pre></div></div><a href="#Coercing-to-types" id="Coercing-to-types"><h2>Coercing to types</h2></a>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-string" id="value-string">string</a> = (<a href="#type-t">t</a>) => option(string)</h4>
 
@@ -143,48 +143,48 @@ assert(num == Some(2.))</code></pre></div></div><a href="#Coercing-to-types" id=
 
 <div class='body '><p>The &quot;force unwrap&quot; operator</p>
 <p>If you&#39;re sure there&#39;s a value, you can force it.</p>
-<pre class='code' data-code-id='3'><code>open Json.Infix;
-let x: int = Some(10) |! &quot;Expected this to be present&quot;;
-Js.log(x);</code></pre>
+<pre class='code'><code>open Json.Infix;
+let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='constructor'>Some</span>(<span class='int'>10</span>) <span class='operator'>|!</span> <span class='string'>&quot;Expected this to be present&quot;</span>;
+<span class='ident'>Js.log</span>(<span class='ident'>x</span>);</code></pre>
 
 <p>But you gotta be sure, otherwise it will throw.</p>
-<pre class='code' data-code-id='4'><code>open Json.Infix;
-let x: int = None |! &quot;This will throw&quot;;</code></pre></div></div>
+<pre class='code'><code>open Json.Infix;
+let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='constructor'>None</span> <span class='operator'>|!</span> <span class='string'>&quot;This will throw&quot;</span>;</code></pre></div></div>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?" id="value-Infix.|?">|?</a> = (option('a), 'a) => 'a</h4>
 
 <div class='body '><p>The &quot;upwrap with default&quot; operator</p>
-<pre class='code' data-code-id='5'><code>open Json.Infix;
-let x: int = Some(10) |? 4;
-let y: int = None |? 5;
-Js.log2(x, y);</code></pre></div></div>
+<pre class='code'><code>open Json.Infix;
+let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='constructor'>Some</span>(<span class='int'>10</span>) <span class='operator'>|?</span> <span class='int'>4</span>;
+let <span class='pattern-ident'>y</span>: <span class='type-constructor'>int</span> = <span class='constructor'>None</span> <span class='operator'>|?</span> <span class='int'>5</span>;
+<span class='ident'>Js.log2</span>(<span class='ident'>x</span>, <span class='ident'>y</span>);</code></pre></div></div>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>" id="value-Infix.|?>">|?></a> = (option('a), ('a) => option('a)) => option('a)</h4>
 
 <div class='body '><p>The &quot;transform contents into new optional&quot; operator</p>
-<pre class='code' data-code-id='6'><code>open Json.Infix;
-let maybeInc = x =&gt; x &gt; 5 ? Some(x + 1) : None;
-let x: option(int) = Some(14) |?&gt; maybeInc;
-let y: option(int) = None |?&gt; maybeInc;</code></pre></div></div>
+<pre class='code'><code>open Json.Infix;
+let <span class='pattern-ident'>maybeInc</span> = <span class='pattern-ident'>x</span> =&gt; <span class='ident'>x</span> <span class='operator'>&gt;</span> <span class='int'>5</span> <span class='patern-constructor'>?</span> <span class='constructor'>Some</span>(<span class='ident'>x</span> <span class='operator'>+</span> <span class='int'>1</span>) <span class='patern-constructor'>:</span> <span class='constructor'>None</span>;
+let <span class='pattern-ident'>x</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>Some</span>(<span class='int'>14</span>) <span class='operator'>|?&gt;</span> <span class='ident'>maybeInc</span>;
+let <span class='pattern-ident'>y</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>None</span> <span class='operator'>|?&gt;</span> <span class='ident'>maybeInc</span>;</code></pre></div></div>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-Infix.|?>>" id="value-Infix.|?>>">|?>></a> = (option('a), ('a) => 'a) => option('a)</h4>
 
 <div class='body '><p>The &quot;transform contents into new value &amp; then re-wrap&quot; operator</p>
-<pre class='code' data-code-id='7'><code>open Json.Infix;
-let inc = x =&gt; x + 1;
-let x: option(int) = Some(7) |?&gt;&gt; inc;
-let y: option(int) = None |?&gt;&gt; inc;
-Js.log2(x, y);</code></pre></div></div>
+<pre class='code'><code>open Json.Infix;
+let <span class='pattern-ident'>inc</span> = <span class='pattern-ident'>x</span> =&gt; <span class='ident'>x</span> <span class='operator'>+</span> <span class='int'>1</span>;
+let <span class='pattern-ident'>x</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>Some</span>(<span class='int'>7</span>) <span class='operator'>|?&gt;&gt;</span> <span class='ident'>inc</span>;
+let <span class='pattern-ident'>y</span>: <span class='type-constructor'>option</span>(<span class='type-constructor'>int</span>) = <span class='constructor'>None</span> <span class='operator'>|?&gt;&gt;</span> <span class='ident'>inc</span>;
+<span class='ident'>Js.log2</span>(<span class='ident'>x</span>, <span class='ident'>y</span>);</code></pre></div></div>
 
 <div class='doc-item'><h4 class='item'>let <a href="#value-Infix.fold" id="value-Infix.fold">fold</a> = (option('a), 'a, ('a) => 'a) => 'a</h4>
 
 <div class='body '><p>&quot;handle the value if present, otherwise here&#39;s the default&quot;</p>
 <p>It&#39;s called fold because that&#39;s what people call it :?. It&#39;s the same as &quot;transform contents to new value&quot; + &quot;unwrap with default&quot;.</p>
-<pre class='code' data-code-id='8'><code>open Json.Infix;
-let inc = x =&gt; x + 1;
-let x: int = fold(Some(4), 10, inc);
-let y: int = fold(None, 2, inc);
-Js.log2(x, y);</code></pre></div></div>
+<pre class='code'><code>open Json.Infix;
+let <span class='pattern-ident'>inc</span> = <span class='pattern-ident'>x</span> =&gt; <span class='ident'>x</span> <span class='operator'>+</span> <span class='int'>1</span>;
+let <span class='pattern-ident'>x</span>: <span class='type-constructor'>int</span> = <span class='ident'>fold</span>(<span class='constructor'>Some</span>(<span class='int'>4</span>), <span class='int'>10</span>, <span class='ident'>inc</span>);
+let <span class='pattern-ident'>y</span>: <span class='type-constructor'>int</span> = <span class='ident'>fold</span>(<span class='constructor'>None</span>, <span class='int'>2</span>, <span class='ident'>inc</span>);
+<span class='ident'>Js.log2</span>(<span class='ident'>x</span>, <span class='ident'>y</span>);</code></pre></div></div>
 </div></div><p>other items defined</p><div class='doc-item'><h4 class='item'>let <a href="#value-string_of_number" id="value-string_of_number">string_of_number</a> = (float) => string</h4>
 
 <div class='body body-empty'></div></div>
