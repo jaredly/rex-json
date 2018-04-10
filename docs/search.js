@@ -1,5 +1,6 @@
 
 (function() {
+  
   var node = (tag, attrs, children) => {
     var node = document.createElement(tag)
     for (var attr in attrs) {
@@ -25,7 +26,8 @@
   var render = (target, node) => {
     target.innerHTML = ''
     target.appendChild(node)
-  }
+  };
+
 
   var input = document.getElementById('search-input');
   var index = elasticlunr.Index.load(window.searchindex);

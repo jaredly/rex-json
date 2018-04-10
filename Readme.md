@@ -46,7 +46,10 @@ let stuff = json
   |?> Json.number; /* == Some(5.) */
 
 /** Using a json path for nested objects */
-let nestedObj = json |> Json.getPath("this.object.is.really"); /* Some(String("nested")) */
+let nestedString = json
+|> Json.getPath("this.object.is.really")
+|?> Json.string; /* Some("nested") */
 
 let str = Json.stringify(json); /* back to a string */
+Js.log2(stuff, nestedString)
 ```
