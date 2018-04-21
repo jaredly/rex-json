@@ -213,7 +213,7 @@ let parseString = (text, pos) => {
 let parseNumber = (text, pos) => {
   let i = ref(pos);
   let len = String.length(text);
-  while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
+  while (i^ < len && ('0' <= text.[i^] && text.[i^] <= '9' || text.[i^] == '.')) {
     i := i^ + 1;
     /* print_endline(">" ++ string_of_int(pos) ++ " : " ++ string_of_int(i^)); */
   };

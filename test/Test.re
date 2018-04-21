@@ -4,6 +4,7 @@ let (ensure, report) = TestLib.go();
 
 open Json;
 ensure(parse("123") == Number(123.), "parse number");
+ensure(parse("123.0") == Number(123.), "parse float number");
 ensure(parse("[]") == Array([]), "empty array");
 ensure(parse("[1,2,3,
 ]") == Array([Number(1.), Number(2.), Number(3.)]), "arr");
