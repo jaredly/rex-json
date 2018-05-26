@@ -114,6 +114,26 @@ let module Infix = {
   let fold = (o, d, f) => switch o { | None => d | Some(v) => f(v) };
 };
 
+let escape = text => {
+  let ln = String.length(text);
+  let buf = Buffer.create(ln);
+  let rec loop = i => {
+    if (i < ln) {
+      switch (text.[i]) {
+      | '\\' => Buffer.add_string(buf, "\\\\")
+      | '\"' => Buffer.add_string(buf, "\\\"")
+      | '\n' => Buffer.add_string(buf, "\\n")
+      | '\r' => Buffer.add_string(buf, "\\r")
+      | '\t' => Buffer.add_string(buf, "\\t")
+      | c => Buffer.add_char(buf, c)
+      };
+      loop(i + 1)
+    }
+  };
+  loop(0);
+  Buffer.contents(buf)
+};
+
 /** ```
  * let text = {|{"hello": "folks", "aa": [2, 3, "four"]}|};
  * let result = Json.stringify(Json.parse(text));
@@ -122,7 +142,7 @@ let module Infix = {
  * ```
  */
 let rec stringify = t => switch t {
-| String(value) => "\"" ++ String.escaped(value) ++ "\""
+| String(value) => "\"" ++ escape(value) ++ "\""
 | Number(num) => string_of_number(num)
 | Array(items) => "[" ++ String.concat(", ", List.map(stringify, items)) ++ "]"
 | Object(items) => "{" ++ String.concat(", ", List.map(((k, v)) => "\"" ++ String.escaped(k) ++ "\": " ++ stringify(v), items)) ++ "}"
@@ -166,7 +186,8 @@ let split_by = (~keep_empty=false, is_delim, str) => {
 let fail = (text, pos, message) => {
   let pre = String.sub(text, 0, pos);
   let lines = split_by((c) => c == '\n', pre);
-  let last = List.nth(lines, List.length(lines) - 1);
+  let count = List.length(lines);
+  let last = count > 0 ? List.nth(lines, count - 1) : "";
   let col = String.length(last) + 1;
   let line = List.length(lines);
   let string = (Printf.sprintf("Error \"%s\" at %d:%d -> %s\n", message, line, col, last));
@@ -194,7 +215,12 @@ let rec skipToCloseMultilineComment = (text, pos) => {
 };
 
 let rec skipWhite = (text, pos) => {
-  if (pos < String.length(text) && (text.[pos] == ' ' || text.[pos] == '\t' || text.[pos] == '\n')) {
+  if (pos < String.length(text) && (
+    text.[pos] == ' ' ||
+    text.[pos] == '\t' ||
+    text.[pos] == '\n' ||
+    text.[pos] == '\r'
+  )) {
     skipWhite(text, pos + 1)
   } else {
     pos
@@ -295,7 +321,7 @@ let rec parse = (text, pos) => {
         fail(text, pos, "unexpected character")
       }
     }
-    | '\n' | '\t' | ' ' => parse(text, skipWhite(text, pos))
+    | '\n' | '\t' | ' ' | '\r' => parse(text, skipWhite(text, pos))
     | '"' => {
       let (s, pos) = parseString(text, pos + 1);
       (String(s), pos)
