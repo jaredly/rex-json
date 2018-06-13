@@ -21,6 +21,6 @@
     "clean": "bsb -clean-world"
   },
   "devDependencies": {
-    "bs-platform": "bsansouci/bsb-native#fast"
+    "bs-platform": "bsansouci/bsb-native#3.2.0"
   }
 }
