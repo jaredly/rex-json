@@ -347,10 +347,7 @@ and parseArrayValue = (text, pos) => {
     }
   }
   | ']' => ([value], pos + 1)
-  | _ => {
-    let (rest, pos) = parseArrayValue(text, pos);
-    ([value, ...rest], pos)
-  }
+  | _ => fail(text, pos, "unexpected character")
   }
 }
 
