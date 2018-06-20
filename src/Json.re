@@ -236,16 +236,26 @@ let parseString = (text, pos) => {
   (Scanf.unescaped(String.sub(text, pos, i^ - pos)), i^ + 1)
 };
 
-let parseNumber = (text, pos) => {
+let rec parseNumber = (text, pos) => {
   let i = ref(pos);
   let len = String.length(text);
-  while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
-    i := i^ + 1;
-    /* print_endline(">" ++ string_of_int(pos) ++ " : " ++ string_of_int(i^)); */
-  };
-  let s = String.sub(text, pos, i^ - pos);
-  /* print_endline(s); */
-  (Number(float_of_string(s)), i^)
+  switch (text.[i^]) {
+  | '-' =>  {
+    let (value, pos) = parseNumber(text, pos + 1);
+    let negativeValue = switch (value) {
+    | Number(v) => v *. -1.
+    | _ => failwith("Invalid syntax")
+    };
+    (Number(negativeValue), pos)
+  }
+  | _ => {
+    while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
+      i := i^ + 1;
+    };
+    let s = String.sub(text, pos, i^ - pos);
+    (Number(float_of_string(s)), i^)
+  }
+  }
 };
 
 let expect = (char, text, pos, message) => {
@@ -326,7 +336,7 @@ let rec parse = (text, pos) => {
       let (s, pos) = parseString(text, pos + 1);
       (String(s), pos)
     }
-    | '0'..'9' => parseNumber(text, pos)
+    | '-' | '0'..'9' => parseNumber(text, pos)
     | _ => fail(text, pos, "unexpected character")
     }
   }
