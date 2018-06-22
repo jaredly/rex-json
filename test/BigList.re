@@ -101,7 +101,6 @@ let go = (ensure) => {
   invalid("{\"a\"");
   invalid("{1:1}");
   invalid("{9999E9999:1}");
-  invalid("{\"π\":\"0\",}");
   invalid("{null:null,null:null}");
   invalid("{\"id\":0,,,,,}");
   invalid("{'a':0}");
@@ -138,7 +137,6 @@ let go = (ensure) => {
   invalid("abc");
   invalid("[\"\\");
   invalid("[\"a\\fa\"]");
-  invalid("[\"new\nline\"]");
   invalid("[\"\t\"]");
   invalid("\"\\UA66D\"");
   invalid("\"\"x");
@@ -192,6 +190,8 @@ let go = (ensure) => {
   invalid("[]");
   invalid("[‚Å†]");
 
+  roundtrip("[\"new\nline\"]");
+  roundtrip("{\"π\":\"0\",}");
   roundtrip("{\"a\":\"b\"}/**/");
   roundtrip("{\"a\":\"b\"}//");
   roundtrip("[\"\",]");
