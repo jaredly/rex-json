@@ -6,6 +6,9 @@ let go = (ensure) => {
   let roundtrip = (string) => ensure(tryparse(string) != None, "Was supposed to parse: " ++ string);
 
   /* Beware, there's a lot of invisible characters in there */
+  invalid("--1");
+  invalid("-42-1");
+  invalid("-42+1");
   invalid("[1 true]");
   invalid("[aÂ]");
   invalid("[\"\": 1]");
