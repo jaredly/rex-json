@@ -236,11 +236,18 @@ let parseString = (text, pos) => {
   (Scanf.unescaped(String.sub(text, pos, i^ - pos)), i^ + 1)
 };
 
+let maybeTwoNumbers = (text, pos, len) => {
+  let num = String.sub(text, pos, len - pos);
+  let next = String.length(num) <= 1 ? None : Some(num.[1]);
+  (num.[0], next)
+};
+
 let rec parseNumber = (text, pos) => {
   let i = ref(pos);
   let len = String.length(text);
-  switch (text.[i^]) {
-  | '-' =>  {
+  switch (maybeTwoNumbers(text, pos, len)) {
+  | ('0', None)  =>  (Number(0.), pos + 1)
+  | ('-', Some('1'..'9'))  =>  {
     let (value, pos) = parseNumber(text, pos + 1);
     let negativeValue = switch (value) {
     | Number(v) => v *. -1.
@@ -248,13 +255,14 @@ let rec parseNumber = (text, pos) => {
     };
     (Number(negativeValue), pos)
   }
-  | _ => {
+  | ('1'..'9', _) => {
     while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
       i := i^ + 1;
     };
     let s = String.sub(text, pos, i^ - pos);
     (Number(float_of_string(s)), i^)
   }
+  | _ => failwith("Invalid syntax")
   }
 };
 
