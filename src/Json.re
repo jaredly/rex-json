@@ -267,7 +267,8 @@ let parseNumber = (text, pos) => {
   let next = String.sub(text, pos, len - pos);
 
   switch (toCharList(next, 3)) {
-  | ['0']  =>  (Number(0.), pos + 1)
+  | ['0', ..._]  =>  (Number(0.), pos + 1)
+  | ['-', '0', ..._]  => (Number(-0.), pos + 1)
   | ['-', '1'..'9', ..._]  =>  {
     let (value, pos) = continousDigits(text, pos + 1, len);
     (Number(float_of_string(value) *. -1.), pos)
