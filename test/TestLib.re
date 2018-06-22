@@ -4,10 +4,10 @@ let go = () => {
   let tests = ref(0);
   let failures = ref(0);
 
-  let ensure = (bool, message) => {
+  let ensure = (group, bool, message) => {
     tests := tests^ + 1;
     if (!bool) {
-      print_endline("Failed: " ++ message);
+      print_endline("[" ++ group ++ "] Failed: " ++ message);
       failures := failures^ + 1;
     };
   };

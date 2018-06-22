@@ -1,6 +1,6 @@
 let (ensure, report) = TestLib.go();
 
-DemoTest.go(ensure);
-BigList.go(ensure);
+DemoTest.go(ensure("DemoTest"));
+BigList.go(ensure("BigList"));
 
 report();
