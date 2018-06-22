@@ -242,6 +242,10 @@ let maybeTwoNumbers = (text, pos, len) => {
   (num.[0], next)
 };
 
+let negateNumber = fun
+  | Number(v) => Number(v *. -1.)
+  | _ => failwith("Invalid syntax");
+
 let rec parseNumber = (text, pos) => {
   let i = ref(pos);
   let len = String.length(text);
@@ -249,11 +253,7 @@ let rec parseNumber = (text, pos) => {
   | ('0', None)  =>  (Number(0.), pos + 1)
   | ('-', Some('1'..'9'))  =>  {
     let (value, pos) = parseNumber(text, pos + 1);
-    let negativeValue = switch (value) {
-    | Number(v) => v *. -1.
-    | _ => failwith("Invalid syntax")
-    };
-    (Number(negativeValue), pos)
+    (negateNumber(value), pos)
   }
   | ('1'..'9', _) => {
     while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
