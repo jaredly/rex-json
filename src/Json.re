@@ -204,6 +204,15 @@ let rec skipToNewline = (text, pos) => {
   }
 };
 
+let stringTail = (text) => {
+  let len = String.length(text);
+  if (len > 1) {
+    String.sub(text, 1, len - 1);
+  } else {
+    ""
+  }
+};
+
 let rec skipToCloseMultilineComment = (text, pos) => {
   if (pos + 1 >= String.length(text)) {
     failwith("Unterminated comment")
@@ -236,10 +245,12 @@ let parseString = (text, pos) => {
   (Scanf.unescaped(String.sub(text, pos, i^ - pos)), i^ + 1)
 };
 
-let maybeTwoDigits = (text, pos, len) => {
-  let num = String.sub(text, pos, len - pos);
-  let next = String.length(num) <= 1 ? None : Some(num.[1]);
-  (num.[0], next)
+let rec toCharList = (text, maxDepth) => {
+  if (String.length(text) < 2 || maxDepth < 2) {
+    [text.[0]]
+  } else {
+    [text.[0], ...toCharList(stringTail(text), maxDepth - 1)]
+  }
 };
 
 let continousDigits = (text, pos, len) => {
@@ -253,17 +264,19 @@ let continousDigits = (text, pos, len) => {
 
 let parseNumber = (text, pos) => {
   let len = String.length(text);
-  switch (maybeTwoDigits(text, pos, len)) {
-  | ('0', None)  =>  (Number(0.), pos + 1)
-  | ('-', Some('1'..'9'))  =>  {
+  let next = String.sub(text, pos, len - pos);
+
+  switch (toCharList(next, 3)) {
+  | ['0']  =>  (Number(0.), pos + 1)
+  | ['-', '1'..'9', ..._]  =>  {
     let (value, pos) = continousDigits(text, pos + 1, len);
     (Number(float_of_string(value) *. -1.), pos)
   }
-  | ('1'..'9', _) => {
+  | ['1'..'9', ..._]=> {
     let (value, pos) = continousDigits(text, pos, len);
     (Number(float_of_string(value)), pos)
   }
-  | _ => failwith("Invalid syntax at " ++ text)
+  | _ => fail(text, pos, "Could not parse number")
   }
 };
 
