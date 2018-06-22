@@ -236,33 +236,34 @@ let parseString = (text, pos) => {
   (Scanf.unescaped(String.sub(text, pos, i^ - pos)), i^ + 1)
 };
 
-let maybeTwoNumbers = (text, pos, len) => {
+let maybeTwoDigits = (text, pos, len) => {
   let num = String.sub(text, pos, len - pos);
   let next = String.length(num) <= 1 ? None : Some(num.[1]);
   (num.[0], next)
 };
 
-let negateNumber = fun
-  | Number(v) => Number(v *. -1.)
-  | _ => failwith("Invalid syntax");
-
-let rec parseNumber = (text, pos) => {
+let continousDigits = (text, pos, len) => {
   let i = ref(pos);
+  while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
+    i := i^ + 1;
+  };
+  let s = String.sub(text, pos, i^ - pos);
+  (s, i^)
+};
+
+let parseNumber = (text, pos) => {
   let len = String.length(text);
-  switch (maybeTwoNumbers(text, pos, len)) {
+  switch (maybeTwoDigits(text, pos, len)) {
   | ('0', None)  =>  (Number(0.), pos + 1)
   | ('-', Some('1'..'9'))  =>  {
-    let (value, pos) = parseNumber(text, pos + 1);
-    (negateNumber(value), pos)
+    let (value, pos) = continousDigits(text, pos + 1, len);
+    (Number(float_of_string(value) *. -1.), pos)
   }
   | ('1'..'9', _) => {
-    while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
-      i := i^ + 1;
-    };
-    let s = String.sub(text, pos, i^ - pos);
-    (Number(float_of_string(s)), i^)
+    let (value, pos) = continousDigits(text, pos, len);
+    (Number(float_of_string(value)), pos)
   }
-  | _ => failwith("Invalid syntax")
+  | _ => failwith("Invalid syntax at " ++ text)
   }
 };
 
