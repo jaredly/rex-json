@@ -255,9 +255,19 @@ let rec toCharList = (text, maxDepth) => {
 
 let continousDigits = (text, pos, len) => {
   let i = ref(pos);
-  while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
+  let dec = ref(false);
+  let isNumber = n =>
+    Char.code('0') <= Char.code(text.[n]) && Char.code(text.[n]) <= Char.code('9');
+  let isDec = n =>
+    dec^ == false && Char.code('.') == Char.code(text.[n]);
+
+  while (i^ < len && (isNumber(i^) || isDec(i^))) {
+    if (isDec(i^)) {
+      dec := true;
+    };
     i := i^ + 1;
   };
+
   let s = String.sub(text, pos, i^ - pos);
   (s, i^)
 };

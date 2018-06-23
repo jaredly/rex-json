@@ -41,7 +41,6 @@ let go = (ensure) => {
   invalid("[+Inf]");
   invalid("[-01]");
   invalid("[-1.0.]");
-  invalid("[-2.]");
   invalid("[-NaN]");
   invalid("[.-1]");
   invalid("[.2e-3]");
@@ -81,7 +80,6 @@ let go = (ensure) => {
   invalid("[-1x]");
   invalid("[1ea]");
   invalid("[1eÂ]");
-  invalid("[1.]");
   invalid("[.123]");
   invalid("[Ôºë]");
   invalid("[1.2a-3]");
@@ -291,8 +289,16 @@ let go = (ensure) => {
   roundtrip(" [] ");
 
   /* number */
+  roundtrip("[1.]");
+  roundtrip("[-2.]");
+
   roundtrip("123");
+  roundtrip("-123");
+  roundtrip("-1.23");
+  roundtrip("-100.230");
   invalid("0.");
+  invalid("00.123");
+  invalid("0.123.1");
   invalid("0.x");
   invalid("0ex");
   invalid("0e-x1");
