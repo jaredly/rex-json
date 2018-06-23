@@ -158,7 +158,6 @@ let go = (ensure) => {
   invalid("2@");
   invalid("{}}");
   invalid("{\"\":");
-  invalid("{\"a\":/*comment*/\"b\"}");
   invalid("{\"a\": true} \"x\"");
   invalid("['");
   invalid("[,");
@@ -196,6 +195,8 @@ let go = (ensure) => {
   roundtrip("[1,]");
   roundtrip("{\"id\":0,}");
 
+
+  roundtrip("{\"a\":/*comment*/\"b\"}");
   roundtrip("[[] ]");
   roundtrip("[\"\"]");
   roundtrip("[]");
