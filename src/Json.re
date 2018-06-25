@@ -204,6 +204,15 @@ let rec skipToNewline = (text, pos) => {
   }
 };
 
+let stringTail = (text) => {
+  let len = String.length(text);
+  if (len > 1) {
+    String.sub(text, 1, len - 1);
+  } else {
+    ""
+  }
+};
+
 let rec skipToCloseMultilineComment = (text, pos) => {
   if (pos + 1 >= String.length(text)) {
     failwith("Unterminated comment")
@@ -236,16 +245,51 @@ let parseString = (text, pos) => {
   (Scanf.unescaped(String.sub(text, pos, i^ - pos)), i^ + 1)
 };
 
-let parseNumber = (text, pos) => {
+let rec toCharList = (text, maxDepth) => {
+  if (String.length(text) < 2 || maxDepth < 2) {
+    [text.[0]]
+  } else {
+    [text.[0], ...toCharList(stringTail(text), maxDepth - 1)]
+  }
+};
+
+let continousDigits = (text, pos, len) => {
   let i = ref(pos);
-  let len = String.length(text);
-  while (i^ < len && Char.code('0') <= Char.code(text.[i^]) && Char.code(text.[i^]) <= Char.code('9')) {
-    i := i^ + 1;
-    /* print_endline(">" ++ string_of_int(pos) ++ " : " ++ string_of_int(i^)); */
+  let dec = ref(false);
+  let isNumber = n => switch (text.[n]) {
+  | '0'..'9' => true
+  | _ => false
   };
+  let isDec = n => dec^ == false && '.' == text.[n];
+
+  while (i^ < len && (isNumber(i^) || isDec(i^))) {
+    if (isDec(i^)) {
+      dec := true;
+    };
+    i := i^ + 1;
+  };
+
   let s = String.sub(text, pos, i^ - pos);
-  /* print_endline(s); */
-  (Number(float_of_string(s)), i^)
+  (s, i^)
+};
+
+let parseNumber = (text, pos) => {
+  let len = String.length(text);
+  let next = String.sub(text, pos, len - pos);
+
+  switch (toCharList(next, 3)) {
+  | ['0', ..._]  =>  (Number(0.), pos + 1)
+  | ['-', '0', ..._]  => (Number(-0.), pos + 2)
+  | ['-', '1'..'9', ..._]  =>  {
+    let (value, pos) = continousDigits(text, pos + 1, len);
+    (Number(float_of_string(value) *. -1.), pos)
+  }
+  | ['1'..'9', ..._]=> {
+    let (value, pos) = continousDigits(text, pos, len);
+    (Number(float_of_string(value)), pos)
+  }
+  | _ => fail(text, pos, "Could not parse number")
+  }
 };
 
 let expect = (char, text, pos, message) => {
@@ -326,7 +370,7 @@ let rec parse = (text, pos) => {
       let (s, pos) = parseString(text, pos + 1);
       (String(s), pos)
     }
-    | '0'..'9' => parseNumber(text, pos)
+    | '-' | '0'..'9' => parseNumber(text, pos)
     | _ => fail(text, pos, "unexpected character")
     }
   }
@@ -347,10 +391,7 @@ and parseArrayValue = (text, pos) => {
     }
   }
   | ']' => ([value], pos + 1)
-  | _ => {
-    let (rest, pos) = parseArrayValue(text, pos);
-    ([value, ...rest], pos)
-  }
+  | _ => fail(text, pos, "unexpected character")
   }
 }
 
