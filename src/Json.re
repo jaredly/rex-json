@@ -256,10 +256,11 @@ let rec toCharList = (text, maxDepth) => {
 let continousDigits = (text, pos, len) => {
   let i = ref(pos);
   let dec = ref(false);
-  let isNumber = n =>
-    Char.code('0') <= Char.code(text.[n]) && Char.code(text.[n]) <= Char.code('9');
-  let isDec = n =>
-    dec^ == false && Char.code('.') == Char.code(text.[n]);
+  let isNumber = n => switch (text.[n]) {
+  | '0'..'9' => true
+  | _ => false
+  };
+  let isDec = n => dec^ == false && '.' == text.[n];
 
   while (i^ < len && (isNumber(i^) || isDec(i^))) {
     if (isDec(i^)) {
