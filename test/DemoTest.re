@@ -81,6 +81,7 @@ let go = (ensure) => {
   ensure(stuff == Some(Number(5.)), "demo 2");
   let nestedObj = json |> Json.getPath("this.object.is.really"); /* Some(String("nested")) */
   ensure(nestedObj == Some(String("nested")), "demo 3");
+  ensure(json |> Json.getPath("this.does.not.exist") == None, "demo 4");
   let str = Json.stringify(json);
   () /* back to a string */
 };
