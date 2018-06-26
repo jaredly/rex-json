@@ -120,9 +120,11 @@ let escape = text => {
   let rec loop = i => {
     if (i < ln) {
       switch (text.[i]) {
+      | '\012' => Buffer.add_string(buf, "\\f")
       | '\\' => Buffer.add_string(buf, "\\\\")
       | '\"' => Buffer.add_string(buf, "\\\"")
       | '\n' => Buffer.add_string(buf, "\\n")
+      | '\b' => Buffer.add_string(buf, "\\b")
       | '\r' => Buffer.add_string(buf, "\\r")
       | '\t' => Buffer.add_string(buf, "\\t")
       | c => Buffer.add_char(buf, c)
@@ -237,59 +239,68 @@ let rec skipWhite = (text, pos) => {
 };
 
 let parseString = (text, pos) => {
-  let i = ref(pos);
-  while (text.[i^] != '"') {
-    i := i^ + (text.[i^] == '\\' ? 2 : 1)
+  /* let i = ref(pos); */
+  let buffer = Buffer.create(String.length(text));
+  let ln = String.length(text);
+  let rec loop = i => i >= ln ? fail(text, i, "Unterminated string") : switch (text.[i]) {
+    | '"' => i + 1
+    | '\\' => i + 1 >= ln ? fail(text, i, "Unterminated string") : switch (text.[i + 1]) {
+      | '/' => {Buffer.add_char(buffer, '/'); loop(i + 2)}
+      | 'f' => {Buffer.add_char(buffer, '\012'); loop(i + 2)}
+      | _ => {Buffer.add_string(buffer, Scanf.unescaped(String.sub(text, i, 2))); loop(i + 2)}
+    }
+    | c => {Buffer.add_char(buffer, c); loop(i + 1)}
   };
-  /* print_endline(text ++ string_of_int(pos)); */
-  (Scanf.unescaped(String.sub(text, pos, i^ - pos)), i^ + 1)
+  let final = loop(pos);
+  (Buffer.contents(buffer), final)
 };
 
-let rec toCharList = (text, maxDepth) => {
-  if (String.length(text) < 2 || maxDepth < 2) {
-    [text.[0]]
+let parseDigits = (text, pos) => {
+  let len = String.length(text);
+  let rec loop = i => {
+    if (i >= len) {
+      i
+    } else {
+      switch (text.[i]) {
+        | '0'..'9' => loop(i + 1)
+        | _ => i
+      }
+    }
+  };
+  loop(pos + 1)
+};
+
+let parseWithDecimal = (text, pos) => {
+  let pos = parseDigits(text, pos);
+  if (pos < String.length(text) && text.[pos] == '.') {
+    let pos = parseDigits(text, pos + 1);
+    pos
   } else {
-    [text.[0], ...toCharList(stringTail(text), maxDepth - 1)]
+    pos
   }
-};
-
-let continousDigits = (text, pos, len) => {
-  let i = ref(pos);
-  let dec = ref(false);
-  let isNumber = n => switch (text.[n]) {
-  | '0'..'9' => true
-  | _ => false
-  };
-  let isDec = n => dec^ == false && '.' == text.[n];
-
-  while (i^ < len && (isNumber(i^) || isDec(i^))) {
-    if (isDec(i^)) {
-      dec := true;
-    };
-    i := i^ + 1;
-  };
-
-  let s = String.sub(text, pos, i^ - pos);
-  (s, i^)
 };
 
 let parseNumber = (text, pos) => {
-  let len = String.length(text);
-  let next = String.sub(text, pos, len - pos);
+  let pos = parseWithDecimal(text, pos);
+  let ln = String.length(text);
+  if (pos < ln - 1 && (text.[pos] == 'E' || text.[pos] == 'e')) {
+    let pos = switch (text.[pos + 1]) {
+      | '-' | '+' => pos + 2
+      | _ => pos + 1
+    };
+    parseDigits(text, pos)
+  } else {
+    pos
+  }
+};
 
-  switch (toCharList(next, 3)) {
-  | ['0', ..._]  =>  (Number(0.), pos + 1)
-  | ['-', '0', ..._]  => (Number(-0.), pos + 2)
-  | ['-', '1'..'9', ..._]  =>  {
-    let (value, pos) = continousDigits(text, pos + 1, len);
-    (Number(float_of_string(value) *. -1.), pos)
-  }
-  | ['1'..'9', ..._]=> {
-    let (value, pos) = continousDigits(text, pos, len);
-    (Number(float_of_string(value)), pos)
-  }
-  | _ => fail(text, pos, "Could not parse number")
-  }
+let parseNegativeNumber = (text, pos) => {
+  let final = if (text.[pos] == '-') {
+    parseNumber(text, pos + 1);
+  } else {
+    parseNumber(text, pos);
+  };
+  (Number(float_of_string(String.sub(text, pos, final - pos))), final)
 };
 
 let expect = (char, text, pos, message) => {
@@ -370,7 +381,7 @@ let rec parse = (text, pos) => {
       let (s, pos) = parseString(text, pos + 1);
       (String(s), pos)
     }
-    | '-' | '0'..'9' => parseNumber(text, pos)
+    | '-' | '0'..'9' => parseNegativeNumber(text, pos)
     | _ => fail(text, pos, "unexpected character")
     }
   }
