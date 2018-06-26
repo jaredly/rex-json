@@ -551,9 +551,12 @@ let null = (t) =>
 
 let rec parsePath = (keyList, t) =>
   switch keyList {
-  | [] => t
+  | [] => Some(t)
   | [head, ...rest] =>
-    parsePath(rest, get(head, t) |> unwrap("Could not find object '" ++ head ++ "'"))
+    switch (get(head, t)) {
+    | None => None
+    | Some(value) => parsePath(rest, value)
+    }
   };
 
 /** Get a deeply nested value from an object `t`.
@@ -566,8 +569,5 @@ let rec parsePath = (keyList, t) =>
  */
 let getPath = (path, t) => {
   let keys = Parser.split_by((c) => c == '.', path);
-  switch t {
-  | Object(items) => Some(parsePath(keys, t))
-  | _ => None
-  }
+  parsePath(keys, t)
 };
