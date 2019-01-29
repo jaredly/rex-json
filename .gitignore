@@ -23,3 +23,5 @@ android/local.properties
 keystore.properties
 public/assets
 android/app/src/main/assets
+*.install
+_esy

@@ -1,0 +1,11 @@
+{
+  "name": "RexJson",
+  "esy": {
+    "build": "dune build -p #{self.name}"
+  },
+  "dependencies": {
+    "ocaml": "*",
+    "@opam/dune": "*",
+    "@opam/reason": "*"
+  }
+}
