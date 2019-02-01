@@ -1,5 +1,6 @@
 let go = (ensure) => {
   open Json;
+  ensure(parse({|"\ud83d\ude92\ud83c\udf89\ud83c\udf89"|}) == String("🚒🎉🎉"), "parse utf8");
   ensure(parse("123") == Number(123.), "parse number");
   ensure(parse("[]") == Array([]), "empty array");
   ensure(parse("[1,2,3,\n  ]") == Array([Number(1.), Number(2.), Number(3.)]), "arr");

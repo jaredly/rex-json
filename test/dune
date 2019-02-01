@@ -1,0 +1,4 @@
+(executable
+  (public_name Test)
+  (flags :standard -open RexJson -w -A)
+  (libraries RexJson))

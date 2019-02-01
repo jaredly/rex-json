@@ -186,31 +186,9 @@ let unwrap = (message, t) =>
 
 [@nodoc]
 module Parser = {
-  let split_by = (~keep_empty=false, is_delim, str) => {
-    let len = String.length(str);
-    let rec loop = (acc, last_pos, pos) =>
-      if (pos == (-1)) {
-        if (last_pos == 0 && ! keep_empty) {
-          acc
-        } else {
-          [String.sub(str, 0, last_pos), ...acc]
-        }
-      } else if (is_delim(str.[pos])) {
-        let new_len = last_pos - pos - 1;
-        if (new_len != 0 || keep_empty) {
-          let v = String.sub(str, pos + 1, new_len);
-          loop([v, ...acc], pos, pos - 1)
-        } else {
-          loop(acc, pos, pos - 1)
-        }
-      } else {
-        loop(acc, last_pos, pos - 1)
-      };
-    loop([], len, len - 1)
-  };
   let fail = (text, pos, message) => {
     let pre = String.sub(text, 0, pos);
-    let lines = split_by((c) => c == '\n', pre);
+    let lines = Utf8.split_by((c) => c == '\n', pre);
     let count = List.length(lines);
     let last = count > 0 ? List.nth(lines, count - 1) : "";
     let col = String.length(last) + 1;
@@ -249,6 +227,9 @@ module Parser = {
     } else {
       pos
     };
+
+
+
   let parseString = (text, pos) => {
     /* let i = ref(pos); */
     let buffer = Buffer.create(String.length(text));
@@ -270,6 +251,22 @@ module Parser = {
                 | 'f' =>
                   Buffer.add_char(buffer, '\012');
                   loop(i + 2)
+                | 'u' =>
+                  i + 5 >= ln ?
+                  fail(text, i, "Unterminated string - utf16 codepoint")
+                  : {
+                      let a = text.[i + 2];
+                      let b = text.[i + 3];
+                      let c = text.[i + 4];
+                      let d = text.[i + 5];
+                      let x = Utf8.hex(a) lsl 12 lor Utf8.hex(b) lsl 8 lor Utf8.hex(c) lsl 4 lor Utf8.hex(d);
+                      if (x >= 0xD800 && x <= 0xDBFF) {
+                        Utf8.finish_surrogate_pair(buffer, x, i + 6, ln, text, loop);
+                      } else {
+                        Utf8.utf8_of_code(buffer, x);
+                        loop(i + 6);
+                      };
+                    }
                 | _ =>
                   Buffer.add_string(buffer, Scanf.unescaped(String.sub(text, i, 2)));
                   loop(i + 2)
@@ -568,6 +565,6 @@ let rec parsePath = (keyList, t) =>
  * ```
  */
 let getPath = (path, t) => {
-  let keys = Parser.split_by((c) => c == '.', path);
+  let keys = Utf8.split_by((c) => c == '.', path);
   parsePath(keys, t)
 };

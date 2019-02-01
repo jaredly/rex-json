@@ -3,6 +3,9 @@
   "esy": {
     "build": "dune build -p #{self.name}"
   },
+  "scripts": {
+    "test": "dune exec Test"
+  },
   "dependencies": {
     "ocaml": "*",
     "@opam/dune": "*",
