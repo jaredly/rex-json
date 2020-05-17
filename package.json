@@ -15,6 +15,7 @@
   "author": "Jared Forsyth",
   "license": "MIT",
   "scripts": {
+    "example": "node lib/js/test/Example.js",
     "build": "npm run build:native &&  npm run build:js",
     "build:native": "bsb -make-world -backend native",
     "build:js": "bsb -make-world -backend js",
