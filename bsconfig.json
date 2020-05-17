@@ -6,7 +6,6 @@
     "error": "+8"
   },
   "sources": [
-
     {
       "backend": ["native","js"],
       "dir": "src"
