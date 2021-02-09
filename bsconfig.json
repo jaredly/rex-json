@@ -1,20 +1,32 @@
 {
   "name": "rex-json",
-  "bsc-flags": "-w -27 -g",
+  "bsc-flags":[ "-w","-27","-bs-super-errors"],
   "warnings": {
     "number": "-40+6+7-26-27+32..39-28-44+45",
-    "error": "+8",
+    "error": "+8"
   },
   "sources": [
-    "./src",
-    {"dir": "test", "type": "dev"},
+    {
+      "backend": ["native","js"],
+      "dir": "src"
+    },
+    {
+      "backend": ["native","js"],
+      "dir": "test" 
+    }
   ],
   "entries": [{
+    "backend": "native",
+    "main-module": "Json"
+  },{
+    "backend": "js",
+    "main-module": "Json"
+  },{
     "backend": "native",
     "main-module": "Test"
   },{
     "backend": "js",
     "main-module": "Test"
   }],
-  "refmt": 3,
+  "refmt": 3
 }
